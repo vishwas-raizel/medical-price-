@@ -1,0 +1,52 @@
+[
+    {
+        "feature": "obese_smoker",
+        "importance": 5753.15,
+        "percentage": 45.5
+    },
+    {
+        "feature": "age",
+        "importance": 3248.4,
+        "percentage": 25.7
+    },
+    {
+        "feature": "smoker_yes",
+        "importance": 2825.9,
+        "percentage": 22.4
+    },
+    {
+        "feature": "children",
+        "importance": 547.01,
+        "percentage": 4.3
+    },
+    {
+        "feature": "bmi",
+        "importance": 214.13,
+        "percentage": 1.7
+    },
+    {
+        "feature": "sex_male",
+        "importance": 24.29,
+        "percentage": 0.2
+    },
+    {
+        "feature": "region_southwest",
+        "importance": 14.37,
+        "percentage": 0.1
+    },
+    {
+        "feature": "region_southeast",
+        "importance": 11.94,
+        "percentage": 0.1
+    },
+    {
+        "feature": "region_northwest",
+        "importance": 4.21,
+        "percentage": 0.0
+    },
+    {
+        "feature": "is_obese",
+        "importance": 0.0,
+        "percentage": 0.0
+    }
+]

@@ -1,0 +1,12 @@
+{
+  "name": "medinsight-ai-platform",
+  "version": "2.0.0",
+  "description": "MEDINSIGHT AI - Advanced Medical Insurance Risk Analytics & ML Prediction Platform",
+  "scripts": {
+    "dev": "python -m uvicorn backend.app.main:app --host 0.0.0.0 --port 8000",
+    "start": "python -m uvicorn backend.app.main:app --host 0.0.0.0 --port 8000",
+    "server": "python -m uvicorn backend.app.main:app --host 0.0.0.0 --port 8000 --reload",
+    "streamlit": "python -m streamlit run app/app.py",
+    "test": "python -m pytest tests -v"
+  }
+}

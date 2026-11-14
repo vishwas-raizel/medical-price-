@@ -1,0 +1,2781 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MEDINSIGHT AI — Enterprise Medical Insurance Risk Intelligence & Actuarial Platform</title>
+  <!-- Tailwind CSS & Chart.js via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#F0F9FF',
+              100: '#E0F2FE',
+              200: '#BAE6FD',
+              300: '#7DD3FC',
+              400: '#38BDF8',
+              500: '#0EA5E9',
+              600: '#0077B6',
+              700: '#03045E',
+              800: '#0B192C',
+              900: '#050D1A',
+            },
+            clinical: {
+              cyan: '#00B4D8',
+              navy: '#0B192C',
+              slate: '#1E3E62',
+              emerald: '#10B981',
+              amber: '#F59E0B',
+              rose: '#EF4444'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    body { font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; }
+    code, pre, .font-mono { font-family: 'JetBrains Mono', monospace; }
+    .fade-in { animation: fadeIn 0.25s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #94A3B8; border-radius: 4px; }
+    .dark ::-webkit-scrollbar-thumb { background: #334155; }
+  </style>
+</head>
+<body class="h-full bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased flex flex-col transition-colors duration-200">
+
+  <!-- ======================================================== -->
+  <!-- TOP HEADER -->
+  <!-- ======================================================== -->
+  <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors">
+    <div class="px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Brand & Mobile Toggle -->
+      <div class="flex items-center space-x-3">
+        <button id="mobileMenuToggle" class="lg:hidden p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 rounded-lg">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+        <div class="flex items-center space-x-2.5 cursor-pointer" onclick="switchTab('landing')">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-700 via-brand-600 to-clinical-cyan flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+          </div>
+          <div>
+            <span class="text-lg font-extrabold tracking-tight bg-gradient-to-r from-brand-700 via-brand-600 to-clinical-cyan dark:from-sky-400 dark:to-cyan-300 bg-clip-text text-transparent">MEDINSIGHT</span>
+            <span class="ml-1 text-[10px] font-bold px-1.5 py-0.5 rounded bg-brand-100 dark:bg-brand-900/80 text-brand-700 dark:text-brand-300 uppercase tracking-widest border border-brand-200 dark:border-brand-700">AI</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Platform Status & Actions -->
+      <div class="flex items-center space-x-3 sm:space-x-4">
+        <!-- Live API Badge -->
+        <div class="hidden md:flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+          <span>API 2.0 Operational</span>
+        </div>
+
+        <!-- Champion Model Pill -->
+        <span class="hidden xl:inline-flex items-center px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+          <span class="w-2 h-2 rounded-full bg-cyan-500 mr-1.5"></span>
+          Champion: Tuned Ensemble (R² = 0.9024)
+        </span>
+
+        <!-- Docs Link -->
+        <a href="/docs" target="_blank" class="hidden sm:flex items-center space-x-1 px-3 py-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-cyan-400 transition" title="Interactive Swagger Documentation">
+          <span>📘 Swagger API</span>
+        </a>
+
+        <!-- Theme Toggle -->
+        <button id="themeToggleBtn" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="Toggle Theme">
+          🌙
+        </button>
+
+        <!-- Dynamic User Badge Area -->
+        <div id="userBadgeArea" class="flex items-center space-x-2">
+          <button onclick="openAuthModal('login')" class="px-3.5 py-1.5 text-xs font-bold rounded-xl bg-brand-600 hover:bg-brand-700 text-white shadow-sm transition">
+            Sign In / Register
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ======================================================== -->
+  <!-- MAIN WORKSPACE: SIDEBAR + CONTENT -->
+  <!-- ======================================================== -->
+  <div class="flex-1 flex overflow-hidden">
+    
+    <!-- SIDEBAR NAVIGATION -->
+    <aside id="sidebar" class="w-64 flex-shrink-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col justify-between overflow-y-auto transition-transform duration-200 fixed lg:static inset-y-0 left-0 z-30 -translate-x-full lg:translate-x-0 pt-16 lg:pt-0">
+      
+      <div class="p-4 space-y-6">
+        
+        <!-- Group 1: Core Platform -->
+        <div>
+          <p class="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Core Platform</p>
+          <div class="space-y-1">
+            <button onclick="switchTab('landing')" id="nav-landing" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-xl font-medium text-xs transition bg-brand-600 text-white shadow-sm">
+              <span class="text-base">🏠</span><span>Landing & Overview</span>
+            </button>
+            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-xl font-medium text-xs transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+              <span class="text-base">📊</span><span>User Dashboard</span>
+            </button>
+            <button onclick="switchTab('predict')" id="nav-predict" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-xl font-medium text-xs transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+              <span class="text-base">🔮</span><span>Insurance Prediction</span>
+            </button>
+            <button onclick="switchTab('risk')" id="nav-risk" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-xl font-medium text-xs transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+              <span class="text-base">🔬</span><span>AI Risk Analysis</span>
+            </button>
+            <button onclick="switchTab('simulator')" id="nav-simulator" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-xl font-medium text-xs transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+              <span class="text-base">🎛️</span><span>What-if Simulator</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Group 2: Intelligence & Advisory -->
+        <div>
+          <p class="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Intelligence & Advisory</p>
+          <div class="space-y-1">
+            <button onclick="switchTab('assistant')" id="nav-assistant" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-xl font-medium text-xs transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+              <span class="text-base">🤖</span><span>AI Insurance Assistant</span>
+            </button>
+            <button onclick="switchTab('comparison')" id="nav-comparison" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-xl font-medium text-xs transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+              <span class="text-base">⚖️</span><span>Plan Comparison</span>
+            </button>
+            <button onclick="switchTab('analytics')" id="nav-analytics" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-xl font-medium text-xs transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+              <span class="text-base">📈</span><span>ML Analytics & Models</span>
+            </button>
+            <button onclick="switchTab('history')" id="nav-history" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-xl font-medium text-xs transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+              <span class="text-base">📁</span><span>Prediction History</span>
+            </button>
+            <button onclick="switchTab('reports')" id="nav-reports" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-xl font-medium text-xs transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+              <span class="text-base">📑</span><span>Certified Reports</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Group 3: Account & Configuration -->
+        <div>
+          <p class="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Account & Setup</p>
+          <div class="space-y-1">
+            <button onclick="switchTab('profile')" id="nav-profile" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-xl font-medium text-xs transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+              <span class="text-base">👤</span><span>My Profile</span>
+            </button>
+            <button onclick="switchTab('settings')" id="nav-settings" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-xl font-medium text-xs transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+              <span class="text-base">⚙️</span><span>Platform Settings</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Group 4: Administration & MLOps -->
+        <div>
+          <p class="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Administration & MLOps</p>
+          <div class="space-y-1">
+            <button onclick="switchTab('admin')" id="nav-admin" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-xl font-medium text-xs transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+              <span class="text-base">🛡️</span><span>Admin Overview</span>
+            </button>
+            <button onclick="switchTab('users')" id="nav-users" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-xl font-medium text-xs transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+              <span class="text-base">👥</span><span>User Management</span>
+            </button>
+            <button onclick="switchTab('dataset')" id="nav-dataset" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-xl font-medium text-xs transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+              <span class="text-base">🗄️</span><span>Dataset Management</span>
+            </button>
+            <button onclick="switchTab('models')" id="nav-models" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-xl font-medium text-xs transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+              <span class="text-base">🧠</span><span>Model Registry</span>
+            </button>
+            <button onclick="switchTab('monitoring')" id="nav-monitoring" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-xl font-medium text-xs transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+              <span class="text-base">📡</span><span>System Monitoring</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Sidebar Footer -->
+      <div class="p-4 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
+        <span>MEDINSIGHT AI v2.4</span>
+        <span class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 font-mono">PROD</span>
+      </div>
+    </aside>
+
+    <!-- CONTENT WORKSPACE -->
+    <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-slate-50 dark:bg-slate-950 transition-colors">
+      
+      <!-- ======================================================== -->
+      <!-- VIEW 1: LANDING & EXECUTIVE OVERVIEW -->
+      <!-- ======================================================== -->
+      <section id="tab-landing" class="tab-pane space-y-8 fade-in">
+        <!-- Hero Section -->
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-900 via-brand-800 to-slate-900 text-white p-8 sm:p-12 shadow-2xl border border-brand-700/30">
+          <div class="relative z-10 max-w-3xl space-y-4">
+            <span class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-clinical-cyan/20 border border-clinical-cyan/40 text-clinical-cyan text-xs font-bold tracking-wider uppercase">
+              <span>★</span><span>College Main Project & Academic Research Platform</span>
+            </span>
+            <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+              Next-Gen Medical Insurance Risk & Price Intelligence
+            </h1>
+            <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+              Empowering consumers, actuaries, and underwriters with real multi-model machine learning, cooperative game-theory SHAP explainability, and mathematically rigorous conformal prediction intervals.
+            </p>
+            <div class="flex flex-wrap gap-3 pt-4">
+              <button onclick="switchTab('predict')" class="px-6 py-3 rounded-xl bg-clinical-cyan hover:bg-cyan-400 text-slate-950 font-bold text-sm shadow-lg shadow-cyan-500/20 transition">
+                ⚡ Launch Prediction Engine
+              </button>
+              <button onclick="switchTab('simulator')" class="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm backdrop-blur-md border border-white/20 transition">
+                🎛️ Explore What-if Simulator
+              </button>
+              <button onclick="switchTab('comparison')" class="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm backdrop-blur-md border border-white/20 transition">
+                ⚖️ Compare Insurance Plans
+              </button>
+            </div>
+          </div>
+          <!-- Decorative Glow -->
+          <div class="absolute -right-20 -bottom-20 w-96 h-96 bg-clinical-cyan/20 rounded-full blur-3xl pointer-events-none"></div>
+        </div>
+
+        <!-- 4 Architecture Pillars -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div class="p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
+            <div class="text-2xl">📊</div>
+            <h4 class="font-bold text-sm">Genuine Kaggle Dataset</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">1,338 validated demographic and biometric records with verified SHA-256 integrity hash.</p>
+          </div>
+          <div class="p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
+            <div class="text-2xl">🧠</div>
+            <h4 class="font-bold text-sm">8 ML Regressors Benchmarked</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Linear, Ridge, Lasso, Random Forest, Gradient Boosting, XGBoost, LightGBM, and CatBoost.</p>
+          </div>
+          <div class="p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
+            <div class="text-2xl">🔍</div>
+            <h4 class="font-bold text-sm">Explainable AI (SHAP)</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Exact additive feature attribution revealing individual cost-increasing and cost-decreasing risk drivers.</p>
+          </div>
+          <div class="p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
+            <div class="text-2xl">🛡️</div>
+            <h4 class="font-bold text-sm">Conformal Uncertainty</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Statistically sound 90% non-parametric coverage bounds without fabricated confidence percentages.</p>
+          </div>
+        </div>
+
+        <!-- Quick Interactive Actuarial Preview -->
+        <div class="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <h3 class="text-base font-bold text-slate-900 dark:text-white mb-2">Interactive Actuarial Quick Preview</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Test the live ML inference pipeline with sample profiles.</p>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div onclick="quickPreviewPredict(25, 'female', 22.5, 0, 'no', 'northeast')" class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-brand-500 cursor-pointer transition bg-slate-50/50 dark:bg-slate-800/40">
+              <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">Low Risk Candidate</span>
+              <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Age 25 • BMI 22.5 • Non-Smoker</p>
+              <p class="text-xs font-mono font-bold text-slate-900 dark:text-white mt-2">Est: ~$2,200 - $3,500/yr</p>
+            </div>
+            <div onclick="quickPreviewPredict(45, 'male', 28.0, 2, 'no', 'southeast')" class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-brand-500 cursor-pointer transition bg-slate-50/50 dark:bg-slate-800/40">
+              <span class="text-xs font-bold text-amber-600 dark:text-amber-400">Moderate Risk Profile</span>
+              <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Age 45 • BMI 28.0 • Non-Smoker • 2 Dep</p>
+              <p class="text-xs font-mono font-bold text-slate-900 dark:text-white mt-2">Est: ~$7,500 - $11,000/yr</p>
+            </div>
+            <div onclick="quickPreviewPredict(52, 'male', 34.2, 1, 'yes', 'southeast')" class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-brand-500 cursor-pointer transition bg-slate-50/50 dark:bg-slate-800/40">
+              <span class="text-xs font-bold text-rose-600 dark:text-rose-400">Critical Risk Scenario</span>
+              <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Age 52 • BMI 34.2 • Active Smoker</p>
+              <p class="text-xs font-mono font-bold text-slate-900 dark:text-white mt-2">Est: ~$38,000 - $48,000/yr</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- VIEW 2: USER DASHBOARD -->
+      <!-- ======================================================== -->
+      <!-- VIEW 2: EXECUTIVE UNDERWRITING DASHBOARD -->
+      <!-- ======================================================== -->
+      <section id="tab-dashboard" class="tab-pane hidden space-y-6 fade-in">
+        <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+          <div>
+            <h2 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Healthcare Risk & Expense Dashboard</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Population-level underwriting metrics, baseline expenditure distributions, and live applicant records.</p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <button onclick="loadDashboardData()" class="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold transition">
+              🔄 Refresh KPIs
+            </button>
+            <button onclick="switchTab('predict')" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-xs shadow-sm transition">
+              + New Underwriting Assessment
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 Metric KPI Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <span class="text-xs text-slate-500 font-medium">Population Mean Annual Charge</span>
+            <p id="dashAvgCost" class="text-2xl font-extrabold text-slate-900 dark:text-white mt-1">$13,270.42</p>
+            <span class="text-[11px] text-slate-400">1,338 Kaggle benchmark samples</span>
+          </div>
+          <div class="p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <span class="text-xs text-slate-500 font-medium">Median Baseline Charge</span>
+            <p id="dashMedianCost" class="text-2xl font-extrabold text-slate-900 dark:text-white mt-1">$9,382.03</p>
+            <span class="text-[11px] text-slate-400">Skewed by tobacco interaction</span>
+          </div>
+          <div class="p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <span class="text-xs text-slate-500 font-medium">High / Critical Risk Share</span>
+            <p id="dashHighRiskPct" class="text-2xl font-extrabold text-rose-600 dark:text-rose-400 mt-1">21.8%</p>
+            <span class="text-[11px] text-slate-400">Smokers & Obese sub-cohort</span>
+          </div>
+          <div class="p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <span class="text-xs text-slate-500 font-medium">Champion Regression R²</span>
+            <p id="dashChampionR2" class="text-2xl font-extrabold text-clinical-cyan mt-1">0.9024</p>
+            <span id="dashChampionName" class="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">Tuned Linear Regression</span>
+          </div>
+        </div>
+
+        <!-- 2 Chart Rows -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <div class="flex justify-between items-center mb-3">
+              <h4 class="text-sm font-bold text-slate-900 dark:text-white">Empirical Charges Distribution (Population Bins)</h4>
+              <span class="text-[11px] text-slate-400 font-mono">N = 1,338</span>
+            </div>
+            <div class="relative h-64 w-full"><canvas id="chartChargesDist"></canvas></div>
+          </div>
+          <div class="p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <div class="flex justify-between items-center mb-3">
+              <h4 class="text-sm font-bold text-slate-900 dark:text-white">Mean Annual Charges by Age Cohort</h4>
+              <span class="text-[11px] text-slate-400 font-mono">18 to 64+ Yrs</span>
+            </div>
+            <div class="relative h-64 w-full"><canvas id="chartAgeCohort"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Actuarial Risk Disparity Cohorts -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div class="p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <div class="flex items-center justify-between text-xs text-slate-500 mb-1">
+              <span>Tobacco Disparity</span>
+              <span class="text-rose-500 font-bold">+380% Cost</span>
+            </div>
+            <div class="text-sm font-bold text-slate-900 dark:text-white">Non-Smoker: $8,434</div>
+            <div class="text-xs text-rose-600 dark:text-rose-400 font-semibold">Smoker: $32,050 / yr</div>
+          </div>
+          <div class="p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <div class="flex items-center justify-between text-xs text-slate-500 mb-1">
+              <span>BMI Disparity</span>
+              <span class="text-amber-500 font-bold">+176% Cost</span>
+            </div>
+            <div class="text-sm font-bold text-slate-900 dark:text-white">BMI &lt; 25: $8,838</div>
+            <div class="text-xs text-amber-600 dark:text-amber-400 font-semibold">BMI &ge; 30 (Obese): $15,561</div>
+          </div>
+          <div class="p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <div class="flex items-center justify-between text-xs text-slate-500 mb-1">
+              <span>Interaction Multiplier</span>
+              <span class="text-rose-600 font-bold">Exponential</span>
+            </div>
+            <div class="text-sm font-bold text-slate-900 dark:text-white">Obese + Smoker</div>
+            <div class="text-xs text-rose-600 dark:text-rose-400 font-semibold">$38,000 – $48,000 / yr</div>
+          </div>
+          <div class="p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <div class="flex items-center justify-between text-xs text-slate-500 mb-1">
+              <span>Family Multiplier</span>
+              <span class="text-cyan-500 font-bold">Linear</span>
+            </div>
+            <div class="text-sm font-bold text-slate-900 dark:text-white">+$440 / Child</div>
+            <div class="text-xs text-slate-500 dark:text-slate-400">Dependent coverage slope</div>
+          </div>
+        </div>
+
+        <!-- Recent Underwriting Activity Table -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+          <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+            <div>
+              <h3 class="text-sm font-bold text-slate-900 dark:text-white">Recent Underwriting Assessments</h3>
+              <p class="text-xs text-slate-500">Latest predictions logged to the platform audit trail.</p>
+            </div>
+            <button onclick="switchTab('history')" class="text-xs font-semibold text-brand-600 dark:text-cyan-400 hover:underline">
+              View All History &rarr;
+            </button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 dark:bg-slate-800/50 text-slate-400 uppercase font-bold">
+                <tr>
+                  <th class="p-3.5">ID</th>
+                  <th class="p-3.5">Applicant Profile</th>
+                  <th class="p-3.5">Predicted Annual Premium</th>
+                  <th class="p-3.5">Risk Tier</th>
+                  <th class="p-3.5 text-right">Certificate</th>
+                </tr>
+              </thead>
+              <tbody id="dashRecentTbody" class="divide-y divide-slate-100 dark:divide-slate-800 font-sans">
+                <tr><td colspan="5" class="p-4 text-center text-slate-400">Loading recent underwriting activity...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- VIEW 3: INSURANCE PREDICTION ENGINE -->
+      <!-- ======================================================== -->
+      <section id="tab-predict" class="tab-pane hidden space-y-6 fade-in">
+        <div class="flex justify-between items-center">
+          <div>
+            <h2 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Insurance Premium Prediction Engine</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Enter applicant features to calculate annual cost, conformal intervals, and SHAP attributions.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Left: Input Form (5 cols) -->
+          <div class="lg:col-span-5 bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-brand-600 dark:text-cyan-400">Applicant Risk Features</h3>
+            
+            <form id="predictionForm" class="space-y-4">
+              <!-- Age -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Age (18 – 65)</label>
+                <input type="number" id="inputAge" min="18" max="100" value="38" required class="w-full px-3 py-2 border rounded-xl text-sm dark:bg-slate-800 dark:border-slate-700 dark:text-white">
+              </div>
+
+              <!-- Sex -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Biological Sex</label>
+                <select id="inputSex" class="w-full px-3 py-2 border rounded-xl text-sm dark:bg-slate-800 dark:border-slate-700 dark:text-white">
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+              </div>
+
+              <!-- BMI with Slider -->
+              <div>
+                <div class="flex justify-between text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <span>Body Mass Index (BMI)</span>
+                  <span id="bmiDisplayVal" class="text-brand-600 font-bold">28.5</span>
+                </div>
+                <input type="range" id="inputBmi" min="15.0" max="55.0" step="0.1" value="28.5" class="w-full accent-brand-600">
+                <div class="flex justify-between text-[10px] text-slate-400 mt-0.5">
+                  <span>Underweight (&lt;18.5)</span>
+                  <span>Normal (18.5-24.9)</span>
+                  <span>Overweight (25-29.9)</span>
+                  <span class="text-rose-500 font-bold">Obese (&ge;30)</span>
+                </div>
+              </div>
+
+              <!-- Children -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Number of Covered Dependents</label>
+                <input type="number" id="inputChildren" min="0" max="10" value="1" required class="w-full px-3 py-2 border rounded-xl text-sm dark:bg-slate-800 dark:border-slate-700 dark:text-white">
+              </div>
+
+              <!-- Smoker Status -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Tobacco Usage / Smoker</label>
+                <select id="inputSmoker" class="w-full px-3 py-2 border rounded-xl text-sm font-semibold dark:bg-slate-800 dark:border-slate-700 dark:text-white">
+                  <option value="no" class="text-emerald-600">No — Non-Smoker</option>
+                  <option value="yes" class="text-rose-600">Yes — Active Smoker (High Surcharge)</option>
+                </select>
+              </div>
+
+              <!-- Region -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Residential Region</label>
+                <select id="inputRegion" class="w-full px-3 py-2 border rounded-xl text-sm dark:bg-slate-800 dark:border-slate-700 dark:text-white">
+                  <option value="northeast">Northeast</option>
+                  <option value="northwest">Northwest</option>
+                  <option value="southeast" selected>Southeast (Empirically Highest Charges)</option>
+                  <option value="southwest">Southwest</option>
+                </select>
+              </div>
+
+              <button type="submit" id="btnRunPrediction" class="w-full py-3 rounded-xl bg-gradient-to-r from-brand-700 via-brand-600 to-clinical-cyan hover:opacity-95 text-white font-bold text-sm shadow-md transition flex items-center justify-center space-x-2">
+                <span>⚡ Calculate Expected Insurance Charges</span>
+              </button>
+            </form>
+          </div>
+
+          <!-- Right: Output Display & SHAP Cards (7 cols) -->
+          <div class="lg:col-span-7 space-y-6">
+            
+            <!-- Result Hero Card -->
+            <div id="predictionResultCard" class="hidden p-6 rounded-2xl bg-gradient-to-br from-brand-900 to-slate-900 text-white shadow-xl border border-brand-700/50 fade-in">
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="text-xs uppercase tracking-wider text-clinical-cyan font-bold">Estimated Annual Premium</span>
+                  <p id="resAnnualCost" class="text-4xl font-extrabold text-white mt-1">$0.00</p>
+                  <p id="resMonthlyCost" class="text-sm text-slate-300 mt-0.5">Approx. $0.00 / month</p>
+                </div>
+                <div id="resRiskBadge" class="px-3.5 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                  Low Risk
+                </div>
+              </div>
+
+              <!-- Conformal Interval & PDF download -->
+              <div class="mt-6 pt-4 border-t border-white/10 flex flex-col sm:flex-row justify-between items-start sm:items-center text-xs">
+                <div>
+                  <span class="text-slate-400">90% Conformal Prediction Bounds:</span>
+                  <p id="resBounds" class="font-mono font-bold text-cyan-300 mt-0.5">$0.00 – $0.00</p>
+                </div>
+                <div class="flex space-x-2 mt-3 sm:mt-0">
+                  <a id="downloadResultPdfLink" href="#" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold flex items-center space-x-1 transition">
+                    <span>📥 Download Certified PDF</span>
+                  </a>
+                  <button onclick="sendPredictionToSimulator()" class="px-3 py-1.5 rounded-lg bg-clinical-cyan text-slate-950 font-bold hover:bg-cyan-400 transition">
+                    <span>🎛️ What-If</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- SHAP Waterfall Decomposition Card -->
+            <div id="shapCard" class="hidden p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 fade-in">
+              <div>
+                <h4 class="text-sm font-bold text-slate-900 dark:text-white">Explainable AI: SHAP Waterfall Decomposition</h4>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Additive contributions pushing this prediction above or below the baseline population average ($13,270).</p>
+              </div>
+              <div id="shapWaterfallContainer" class="space-y-2"></div>
+            </div>
+
+            <!-- Evidence-Based Guidance Card -->
+            <div id="clinicalGuidanceCard" class="hidden p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3 fade-in">
+              <h4 class="text-sm font-bold text-slate-900 dark:text-white">Actuarial Risk Reduction Guidance</h4>
+              <ul id="clinicalGuidanceList" class="space-y-1.5 text-xs text-slate-600 dark:text-slate-300 list-disc list-inside"></ul>
+            </div>
+
+            <!-- Placeholder Prompt -->
+            <div id="predictPromptCard" class="p-12 text-center bg-white dark:bg-slate-900 rounded-2xl border border-dashed border-slate-300 dark:border-slate-800">
+              <div class="text-4xl mb-3">🔮</div>
+              <h4 class="text-sm font-bold text-slate-700 dark:text-slate-300">Awaiting Assessment Parameters</h4>
+              <p class="text-xs text-slate-400 max-w-sm mx-auto mt-1">Fill out the applicant features on the left and click calculate to view the real ML estimation and SHAP waterfall decomposition.</p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- VIEW 4: AI RISK ANALYSIS -->
+      <!-- ======================================================== -->
+      <section id="tab-risk" class="tab-pane hidden space-y-6 fade-in">
+        <div>
+          <h2 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Actuarial Risk Analysis & Non-Linear Interactions</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Deconstructing key biological, behavioral, and demographic cost drivers.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+            <span class="text-xs font-bold uppercase tracking-wider text-rose-500">Major Multiplier #1</span>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white">The Tobacco Surcharge</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Smoking is the single most influential driver in the entire Kaggle dataset. It accounts for over 60% of total variance, adding an average baseline surcharge of $15,000–$25,000 annually.</p>
+            <div class="p-3 bg-rose-50 dark:bg-rose-950/40 rounded-xl text-xs text-rose-700 dark:text-rose-300 font-medium">
+              Tobacco usage shifts policyholders immediately into High Risk classification.
+            </div>
+          </div>
+
+          <div class="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+            <span class="text-xs font-bold uppercase tracking-wider text-amber-500">Major Multiplier #2</span>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white">Obese-Smoker Interaction (BMI &ge; 30)</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Our machine learning models capture the severe non-linear interaction effect between clinical obesity and active smoking. When both co-exist, predicted charges surge past $35,000/year.</p>
+            <div class="p-3 bg-amber-50 dark:bg-amber-950/40 rounded-xl text-xs text-amber-700 dark:text-amber-300 font-medium">
+              Compound synergy accounts for the highest residual spikes in tree algorithms.
+            </div>
+          </div>
+
+          <div class="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+            <span class="text-xs font-bold uppercase tracking-wider text-brand-600">Linear Driver #3</span>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white">Age Aging Progression</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Charges increase roughly linearly by ~$250–$300 per additional year of age for non-smokers, driven by natural chronic illness probabilities and outpatient visit frequencies.</p>
+            <div class="p-3 bg-brand-50 dark:bg-brand-950/40 rounded-xl text-xs text-brand-700 dark:text-brand-300 font-medium">
+              Standard 3:1 age band restrictions apply in individual ACA markets.
+            </div>
+          </div>
+        </div>
+
+        <div class="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <h4 class="text-sm font-bold text-slate-900 dark:text-white mb-3">Feature Sensitivity Matrix (Trained Tree SHAP Importances)</h4>
+          <div class="h-64"><canvas id="chartRiskFeatureSens"></canvas></div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- VIEW 5: WHAT-IF SIMULATOR -->
+      <!-- ======================================================== -->
+      <section id="tab-simulator" class="tab-pane hidden space-y-6 fade-in">
+        <div class="flex justify-between items-center">
+          <div>
+            <h2 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Interactive What-If Scenario Simulator</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Modify baseline lifestyle and biometric parameters to observe instant dollar deltas computed by the real ML model.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Controls Panel (6 cols) -->
+          <div class="lg:col-span-6 bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
+            <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3">
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Scenario Builder</span>
+              <button onclick="resetSimulator()" class="text-xs text-brand-600 font-semibold hover:underline">Reset to Defaults</button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <!-- Age -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Current Age: <span id="simAgeVal" class="text-brand-600 font-bold">45</span></label>
+                <input type="range" id="simAge" min="18" max="65" value="45" class="w-full accent-brand-600">
+              </div>
+
+              <!-- BMI -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Target BMI: <span id="simBmiVal" class="text-brand-600 font-bold">28.0</span></label>
+                <input type="range" id="simBmi" min="18.0" max="45.0" step="0.5" value="28.0" class="w-full accent-brand-600">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <!-- Smoking -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Smoking Status</label>
+                <select id="simSmoker" class="w-full px-3 py-2 border rounded-xl text-sm font-semibold dark:bg-slate-800 dark:border-slate-700 dark:text-white">
+                  <option value="no">Non-Smoker (Clean)</option>
+                  <option value="yes" selected>Active Smoker</option>
+                </select>
+              </div>
+
+              <!-- Dependents -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Covered Dependents</label>
+                <select id="simChildren" class="w-full px-3 py-2 border rounded-xl text-sm dark:bg-slate-800 dark:border-slate-700 dark:text-white">
+                  <option value="0">0 Dependents</option>
+                  <option value="1">1 Dependent</option>
+                  <option value="2" selected>2 Dependents</option>
+                  <option value="3">3 Dependents</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Region -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Residential Region</label>
+              <select id="simRegion" class="w-full px-3 py-2 border rounded-xl text-sm dark:bg-slate-800 dark:border-slate-700 dark:text-white">
+                <option value="northeast">Northeast</option>
+                <option value="northwest">Northwest</option>
+                <option value="southeast" selected>Southeast</option>
+                <option value="southwest">Southwest</option>
+              </select>
+            </div>
+
+            <button onclick="runSimulation()" class="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-md transition">
+              ⚡ Execute Real-Time Scenario Simulation
+            </button>
+          </div>
+
+          <!-- Simulation Comparison Display (6 cols) -->
+          <div class="lg:col-span-6 space-y-4">
+            
+            <div id="simResultsCard" class="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+              <h3 class="text-sm font-bold text-slate-900 dark:text-white">Projected Financial Impact</h3>
+              
+              <div class="grid grid-cols-2 gap-4">
+                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+                  <span class="text-xs text-slate-400">Baseline Annual Cost</span>
+                  <p id="simBaseCost" class="text-2xl font-extrabold text-slate-900 dark:text-white mt-1">$0.00</p>
+                  <span id="simBaseRisk" class="text-[10px] font-semibold text-slate-500">Awaiting simulation</span>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+                  <span class="text-xs text-slate-400">Simulated Annual Cost</span>
+                  <p id="simModCost" class="text-2xl font-extrabold text-brand-600 dark:text-cyan-400 mt-1">$0.00</p>
+                  <span id="simModRisk" class="text-[10px] font-semibold text-slate-500">Awaiting simulation</span>
+                </div>
+              </div>
+
+              <div id="simDeltaBanner" class="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900 flex justify-between items-center">
+                <div>
+                  <span class="text-xs text-emerald-800 dark:text-emerald-300 font-bold">Annual Premium Variance:</span>
+                  <p id="simDeltaVal" class="text-xl font-extrabold text-emerald-600 dark:text-emerald-400">$0.00 (0.0%)</p>
+                </div>
+                <div id="simSavingsBadge" class="text-xs font-bold px-3 py-1 bg-emerald-600 text-white rounded-lg">
+                  Projected Savings
+                </div>
+              </div>
+
+              <!-- Key Actuarial Drivers -->
+              <div>
+                <span class="text-xs font-bold text-slate-700 dark:text-slate-300">Actuarial Scenario Explanation:</span>
+                <ul id="simDriversList" class="mt-2 space-y-1 text-xs text-slate-600 dark:text-slate-300 list-disc list-inside">
+                  <li>Click Execute Simulation to view instant delta breakdowns.</li>
+                </ul>
+              </div>
+
+              <div class="h-44 pt-2"><canvas id="chartSimComparison"></canvas></div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- VIEW 6: INSURANCE PLAN COMPARISON -->
+      <!-- ======================================================== -->
+      <section id="tab-comparison" class="tab-pane hidden space-y-6 fade-in">
+        <div class="flex justify-between items-center">
+          <div>
+            <h2 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Insurance Plan Comparison & Recommendation</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Side-by-side comparison of 4 verified illustrative plan structures with actuarial matching.</p>
+          </div>
+          <button onclick="recommendPlanForCurrentProfile()" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-xs shadow-sm transition">
+            🎯 Auto-Match to My Risk Profile
+          </button>
+        </div>
+
+        <div id="planRecommendationBanner" class="hidden p-4 rounded-2xl bg-cyan-50 dark:bg-cyan-950/40 border border-cyan-200 dark:border-cyan-800 text-xs text-cyan-900 dark:text-cyan-200 fade-in">
+          <p id="planRecText" class="font-medium"></p>
+        </div>
+
+        <div id="plansGridContainer" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+          <!-- Loaded via API -->
+          <div class="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 text-center text-slate-400 text-xs">
+            Loading insurance plans...
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- VIEW 7: AI INSURANCE ASSISTANT -->
+      <!-- ======================================================== -->
+      <section id="tab-assistant" class="tab-pane hidden space-y-6 fade-in">
+        <div>
+          <h2 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">AI Actuarial & Insurance Intelligence Assistant</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Ask any question regarding insurance terminology, SHAP risk drivers, policy clauses, or conformal predictions.</p>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col h-[650px] overflow-hidden">
+          
+          <!-- Chat Message Feed -->
+          <div id="chatFeed" class="flex-1 p-6 overflow-y-auto space-y-4">
+            <!-- Initial Assistant Greeting -->
+            <div class="flex items-start space-x-3 max-w-2xl">
+              <div class="w-8 h-8 rounded-xl bg-brand-600 text-white flex items-center justify-center font-bold text-xs flex-shrink-0">AI</div>
+              <div class="p-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-xs text-slate-800 dark:text-slate-200 space-y-2">
+                <p>Hello! I am your <b>MedInsight AI Insurance Assistant</b>. I can explain any health insurance concept, deconstruct your predicted charges, or help you compare HMO, PPO, and HDHP policies.</p>
+                <p class="text-slate-500 dark:text-slate-400">Click any of the suggested prompts below or type your own question!</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Suggested Topic Chips -->
+          <div class="px-6 py-2.5 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-800 flex flex-wrap gap-2 text-xs">
+            <button onclick="askAssistantChip('Explain the difference between deductible and coinsurance.')" class="px-3 py-1 bg-white dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600 hover:border-brand-500 text-slate-700 dark:text-slate-300 transition">
+              💡 Deductible vs Coinsurance
+            </button>
+            <button onclick="askAssistantChip('Why does smoking increase medical insurance charges so heavily?')" class="px-3 py-1 bg-white dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600 hover:border-brand-500 text-slate-700 dark:text-slate-300 transition">
+              🚬 Tobacco Actuarial Impact
+            </button>
+            <button onclick="askAssistantChip('How does the SHAP Waterfall chart work?')" class="px-3 py-1 bg-white dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600 hover:border-brand-500 text-slate-700 dark:text-slate-300 transition">
+              🔍 What is SHAP?
+            </button>
+            <button onclick="askAssistantChip('What is Conformal Prediction and how are the bounds calculated?')" class="px-3 py-1 bg-white dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600 hover:border-brand-500 text-slate-700 dark:text-slate-300 transition">
+              🛡️ Conformal Prediction
+            </button>
+          </div>
+
+          <!-- Input Box -->
+          <form id="assistantChatForm" class="p-4 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex space-x-3">
+            <input type="text" id="assistantInput" placeholder="Ask about copays, deductibles, SHAP values, pre-existing waiting periods..." required class="flex-1 px-4 py-2.5 border rounded-xl text-xs dark:bg-slate-800 dark:border-slate-700 dark:text-white">
+            <button type="submit" id="btnSendChat" class="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center space-x-1">
+              <span>Send</span>
+            </button>
+          </form>
+
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- VIEW 8: ML ANALYTICS & BENCHMARKS -->
+      <!-- ======================================================== -->
+      <section id="tab-analytics" class="tab-pane hidden space-y-6 fade-in">
+        <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+          <div>
+            <h2 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Machine Learning Benchmarks & Model Evaluation</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Empirical validation metrics across 8 regression algorithms on genuine 1,338 Kaggle records with 5-fold cross-validation.</p>
+          </div>
+          <button onclick="loadAnalyticsData()" class="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold transition">
+            🔄 Refresh Evaluation Metrics
+          </button>
+        </div>
+
+        <!-- Executive Model Evaluation Summary Cards -->
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+          <div class="p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <span class="text-xs text-slate-400 font-medium">Champion Model</span>
+            <p class="text-sm font-extrabold text-brand-600 dark:text-cyan-400 mt-1 truncate">Tuned Linear Reg.</p>
+            <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">Production Ready</span>
+          </div>
+          <div class="p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <span class="text-xs text-slate-400 font-medium">Validation R² Score</span>
+            <p class="text-lg font-extrabold text-slate-900 dark:text-white mt-1">0.9024</p>
+            <span class="text-[10px] text-slate-400">90.2% variance explained</span>
+          </div>
+          <div class="p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <span class="text-xs text-slate-400 font-medium">Test RMSE</span>
+            <p class="text-lg font-extrabold text-slate-900 dark:text-white mt-1">$4,234.58</p>
+            <span class="text-[10px] text-slate-400">Root Mean Squared Error</span>
+          </div>
+          <div class="p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <span class="text-xs text-slate-400 font-medium">Test MAE</span>
+            <p class="text-lg font-extrabold text-slate-900 dark:text-white mt-1">$2,414.12</p>
+            <span class="text-[10px] text-slate-400">Mean Absolute Error</span>
+          </div>
+          <div class="p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm col-span-2 sm:col-span-1">
+            <span class="text-xs text-slate-400 font-medium">5-Fold CV Mean R²</span>
+            <p class="text-lg font-extrabold text-emerald-600 dark:text-emerald-400 mt-1">0.8436</p>
+            <span class="text-[10px] text-slate-400">Cross-validation stability</span>
+          </div>
+        </div>
+
+        <!-- Benchmarks Table -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+          <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+            <div>
+              <h3 class="text-sm font-bold text-slate-900 dark:text-white">Multi-Algorithm Benchmark Leaderboard</h3>
+              <p class="text-xs text-slate-500">Evaluated on 80/20 train/test stratified split with 5-fold cross-validation.</p>
+            </div>
+            <span class="text-xs text-slate-400 font-mono">1,338 Kaggle Samples</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 dark:bg-slate-800/50 text-slate-400 uppercase font-bold">
+                <tr>
+                  <th class="p-3.5">Algorithm</th>
+                  <th class="p-3.5">5-Fold CV R²</th>
+                  <th class="p-3.5">Test R² Score</th>
+                  <th class="p-3.5">Test RMSE ($)</th>
+                  <th class="p-3.5">Test MAE ($)</th>
+                  <th class="p-3.5">Status</th>
+                </tr>
+              </thead>
+              <tbody id="benchmarksTbody" class="divide-y divide-slate-100 dark:divide-slate-800 font-mono">
+                <tr><td colspan="6" class="p-4 text-center text-slate-400">Loading benchmark evaluation matrix...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Evaluation Charts Grid 1: R2 & RMSE Comparisons -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <div class="flex justify-between items-center mb-3">
+              <h4 class="text-sm font-bold text-slate-900 dark:text-white">Algorithm Test R² Score Comparison</h4>
+              <span class="text-xs text-slate-400 font-mono">Higher is Better</span>
+            </div>
+            <div class="relative h-64 w-full"><canvas id="chartModelR2"></canvas></div>
+          </div>
+          <div class="p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <div class="flex justify-between items-center mb-3">
+              <h4 class="text-sm font-bold text-slate-900 dark:text-white">Root Mean Squared Error (RMSE)</h4>
+              <span class="text-xs text-slate-400 font-mono">Lower is Better</span>
+            </div>
+            <div class="relative h-64 w-full"><canvas id="chartModelRmse"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Evaluation Charts Grid 2: Actual vs Predicted & Residuals Distribution -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <div class="flex justify-between items-center mb-1">
+              <h4 class="text-sm font-bold text-slate-900 dark:text-white">Actual vs. Predicted Medical Charges ($)</h4>
+              <span class="text-xs text-emerald-600 dark:text-emerald-400 font-bold">Identity y = x Line</span>
+            </div>
+            <p class="text-xs text-slate-400 mb-3">Scatter plot of validation test set predictions against ground truth billed charges.</p>
+            <div class="relative h-64 w-full"><canvas id="chartActualVsPred"></canvas></div>
+          </div>
+          <div class="p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <div class="flex justify-between items-center mb-1">
+              <h4 class="text-sm font-bold text-slate-900 dark:text-white">Residual Error Distribution Histogram</h4>
+              <span class="text-xs text-slate-400 font-mono">Mean: -$17.82 • Std: $4,142.27</span>
+            </div>
+            <p class="text-xs text-slate-400 mb-3">Analysis of prediction errors (Actual - Predicted) demonstrating zero-centered symmetry.</p>
+            <div class="relative h-64 w-full"><canvas id="chartResidualDist"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Evaluation Charts Grid 3: Global Feature Importance & Error Analysis -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <div class="flex justify-between items-center mb-1">
+              <h4 class="text-sm font-bold text-slate-900 dark:text-white">Global Feature Importance (SHAP Weights)</h4>
+              <span class="text-xs text-brand-600 dark:text-cyan-400 font-bold">10 Model Features</span>
+            </div>
+            <p class="text-xs text-slate-400 mb-3">Relative contribution of demographic and interaction features in determining cost.</p>
+            <div class="relative h-64 w-full"><canvas id="chartAnalyticsFeatureImp"></canvas></div>
+          </div>
+          <div class="p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+            <div>
+              <h4 class="text-sm font-bold text-slate-900 dark:text-white mb-2">Model Evaluation Formulations & Methodology</h4>
+              <div class="space-y-3 text-xs text-slate-600 dark:text-slate-300">
+                <div class="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+                  <span class="font-bold text-slate-900 dark:text-white">Mean Absolute Error (MAE):</span>
+                  <p class="font-mono text-[11px] text-slate-500 mt-0.5">MAE = (1/n) &Sigma; |y_i - &ycirc;_i| = $2,414.12</p>
+                  <p class="text-[11px] text-slate-400 mt-1">Average absolute dollar deviation per applicant prediction.</p>
+                </div>
+                <div class="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+                  <span class="font-bold text-slate-900 dark:text-white">Root Mean Squared Error (RMSE):</span>
+                  <p class="font-mono text-[11px] text-slate-500 mt-0.5">RMSE = &radic;((1/n) &Sigma; (y_i - &ycirc;_i)&sup2;) = $4,234.58</p>
+                  <p class="text-[11px] text-slate-400 mt-1">Penalizes large outlier discrepancies quadratically.</p>
+                </div>
+                <div class="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+                  <span class="font-bold text-slate-900 dark:text-white">Coefficient of Determination (R²):</span>
+                  <p class="font-mono text-[11px] text-slate-500 mt-0.5">R² = 1 - (&Sigma; (y_i - &ycirc;_i)&sup2; / &Sigma; (y_i - &ybar;)&sup2;) = 0.9024</p>
+                  <p class="text-[11px] text-slate-400 mt-1">Over 90.2% of healthcare expense variance is explained by the model.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- High-Resolution Publication Figures Gallery -->
+        <div class="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+          <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+            <div>
+              <h3 class="text-sm font-bold text-slate-900 dark:text-white">High-Resolution Diagnostic Figures & Plots</h3>
+              <p class="text-xs text-slate-500">Publication-quality Matplotlib & Seaborn plots generated from training pipeline.</p>
+            </div>
+            <div class="flex flex-wrap gap-1.5" id="plotGalleryButtons">
+              <button onclick="showPlotFigure('actual_vs_predicted')" class="plot-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-brand-600 text-white shadow-sm transition">Actual vs Pred</button>
+              <button onclick="showPlotFigure('residuals_distribution')" class="plot-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 transition">Residuals</button>
+              <button onclick="showPlotFigure('feature_importance')" class="plot-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 transition">Feature Imp</button>
+              <button onclick="showPlotFigure('eda_correlation_heatmap')" class="plot-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 transition">Correlation</button>
+              <button onclick="showPlotFigure('eda_bmi_vs_charges_by_smoker')" class="plot-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 transition">BMI x Smoker</button>
+              <button onclick="showPlotFigure('eda_age_vs_charges')" class="plot-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 transition">Age Trends</button>
+            </div>
+          </div>
+
+          <div class="border border-slate-100 dark:border-slate-800 rounded-xl overflow-hidden bg-slate-50 dark:bg-slate-950 p-2 flex flex-col items-center justify-center min-h-[320px]">
+            <img id="activeGalleryImg" src="/reports/figures/actual_vs_predicted.png" alt="Diagnostic Plot" class="max-h-[460px] object-contain rounded-lg shadow-sm">
+            <p id="activeGalleryCaption" class="text-xs text-slate-500 dark:text-slate-400 mt-2 text-center font-medium">Actual vs. Predicted Medical Charges with identity diagonal (Test Set R² = 0.9024).</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- VIEW 9: PREDICTION HISTORY & CSV -->
+      <!-- ======================================================== -->
+      <section id="tab-history" class="tab-pane hidden space-y-6 fade-in">
+        <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+          <div>
+            <h2 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Underwriting History & Audit Records</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Search past predictions, inspect detailed SHAP decompositions, or download official PDF certificates.</p>
+          </div>
+          <div class="flex space-x-2">
+            <select id="historyFilterRisk" class="px-3 py-1.5 border rounded-xl text-xs dark:bg-slate-800 dark:border-slate-700">
+              <option value="">All Risk Tiers</option>
+              <option value="Low">Low Risk</option>
+              <option value="Moderate">Moderate Risk</option>
+              <option value="High">High Risk</option>
+              <option value="Critical">Critical Risk</option>
+            </select>
+            <a href="/api/history/export/csv" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl shadow-sm transition flex items-center space-x-1">
+              <span>📥 Export CSV</span>
+            </a>
+            <button onclick="loadHistoryData()" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-xs font-semibold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition">
+              Refresh
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 dark:bg-slate-800/50 text-slate-400 uppercase font-bold">
+              <tr>
+                <th class="p-3.5">ID</th>
+                <th class="p-3.5">Applicant Details</th>
+                <th class="p-3.5">Smoker / Region</th>
+                <th class="p-3.5">Predicted Annual</th>
+                <th class="p-3.5">90% Conformal Range</th>
+                <th class="p-3.5">Risk Tier</th>
+                <th class="p-3.5 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="historyTbody" class="divide-y divide-slate-100 dark:divide-slate-800">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- VIEW 10: CERTIFIED REPORTS -->
+      <!-- ======================================================== -->
+      <section id="tab-reports" class="tab-pane hidden space-y-6 fade-in">
+        <div>
+          <h2 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Certified PDF Reports & Audit Archive</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Download tamper-evident PDF certificates containing mathematical SHAP attribution graphs and conformal intervals.</p>
+        </div>
+
+        <div class="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-red-100 text-red-600 flex items-center justify-center font-bold text-lg">PDF</div>
+            <div>
+              <h4 class="text-sm font-bold text-slate-900 dark:text-white">Official Actuarial Risk Assessment Certificate</h4>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Generated dynamically using Python ReportLab with official timestamp and SHA-256 validation seal.</p>
+            </div>
+          </div>
+          <p class="text-xs text-slate-600 dark:text-slate-300">
+            Each report includes complete applicant demographics, predicted annual and monthly charges, risk classification, 90% conformal bounds, full SHAP waterfall feature breakdown, and clinical risk mitigation guidance.
+          </p>
+          <div class="pt-2">
+            <button onclick="switchTab('history')" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-semibold shadow-sm transition">
+              Browse Past Predictions to Download PDF Reports &rarr;
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- VIEW 11: MY PROFILE -->
+      <!-- ======================================================== -->
+      <section id="tab-profile" class="tab-pane hidden space-y-6 fade-in">
+        <div>
+          <h2 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">My Account Profile & Credentials</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Manage your profile information and update your password.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Profile Info Card -->
+          <div class="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white">Account Details</h3>
+            <div class="space-y-3 text-xs">
+              <div>
+                <span class="text-slate-400">Email Address:</span>
+                <p id="profEmail" class="font-mono font-bold text-slate-800 dark:text-slate-200">Not Signed In</p>
+              </div>
+              <div>
+                <span class="text-slate-400">Full Name:</span>
+                <p id="profName" class="font-semibold text-slate-800 dark:text-slate-200">Guest User</p>
+              </div>
+              <div>
+                <span class="text-slate-400">Assigned Role:</span>
+                <p id="profRole" class="font-semibold text-brand-600 dark:text-cyan-400 uppercase">GUEST</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Edit Profile & Password Form -->
+          <div class="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white">Update Information</h3>
+            <form id="profileUpdateForm" class="space-y-3.5">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Full Name</label>
+                <input type="text" id="profInputName" class="w-full px-3 py-2 border rounded-xl text-xs dark:bg-slate-800 dark:border-slate-700 dark:text-white">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">New Password (leave blank to keep current)</label>
+                <input type="password" id="profInputNewPass" minlength="6" class="w-full px-3 py-2 border rounded-xl text-xs dark:bg-slate-800 dark:border-slate-700 dark:text-white" placeholder="••••••••">
+              </div>
+              <button type="submit" class="w-full py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold text-xs rounded-xl shadow-sm transition">
+                Save Profile Changes
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- VIEW 12: PLATFORM SETTINGS -->
+      <!-- ======================================================== -->
+      <section id="tab-settings" class="tab-pane hidden space-y-6 fade-in">
+        <div>
+          <h2 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Platform Settings & System Parameters</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Configure client behavior, theme preferences, and security audit rules.</p>
+        </div>
+
+        <div class="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 max-w-2xl">
+          <div class="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-800">
+            <div>
+              <h4 class="text-xs font-bold text-slate-900 dark:text-white">Dark Mode Appearance</h4>
+              <p class="text-[11px] text-slate-400">Toggle dark clinical theme</p>
+            </div>
+            <button onclick="document.getElementById('themeToggleBtn').click()" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-xs font-semibold rounded-lg hover:bg-slate-200">
+              Toggle Theme
+            </button>
+          </div>
+
+          <div class="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-800">
+            <div>
+              <h4 class="text-xs font-bold text-slate-900 dark:text-white">Conformal Coverage Level</h4>
+              <p class="text-[11px] text-slate-400">Statistical interval coverage guarantee</p>
+            </div>
+            <span class="text-xs font-mono font-bold text-brand-600 dark:text-cyan-400">90% (Alpha = 0.10)</span>
+          </div>
+
+          <div class="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-800">
+            <div>
+              <h4 class="text-xs font-bold text-slate-900 dark:text-white">Local Database Storage</h4>
+              <p class="text-[11px] text-slate-400">SQLite with SQLAlchemy ORM persistence</p>
+            </div>
+            <span class="text-xs font-mono text-emerald-600 font-bold">Enabled</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- VIEW 13: ADMIN OVERVIEW -->
+      <!-- ======================================================== -->
+      <section id="tab-admin" class="tab-pane hidden space-y-6 fade-in">
+        <div>
+          <h2 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Administrative Control & Platform Overview</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">System metrics, active users, audit logs, and verified database checksums.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div class="p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <span class="text-xs text-slate-400">Total Registered Users</span>
+            <p id="adminUserCount" class="text-2xl font-bold mt-1">10</p>
+          </div>
+          <div class="p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <span class="text-xs text-slate-400">Persisted Predictions</span>
+            <p id="adminPredCount" class="text-2xl font-bold mt-1">7</p>
+          </div>
+          <div class="p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <span class="text-xs text-slate-400">Total Audit Log Events</span>
+            <p id="adminAuditCount" class="text-2xl font-bold mt-1">38</p>
+          </div>
+          <div class="p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <span class="text-xs text-slate-400">Database Engine</span>
+            <p class="text-sm font-bold text-emerald-600 dark:text-emerald-400 mt-1">SQLite / SQLAlchemy</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- VIEW 14: USER MANAGEMENT -->
+      <!-- ======================================================== -->
+      <section id="tab-users" class="tab-pane hidden space-y-6 fade-in">
+        <div class="flex justify-between items-center">
+          <div>
+            <h2 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Enterprise User Management</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Manage user roles (Admin, User, Actuary, Underwriter) and account activation status.</p>
+          </div>
+          <button onclick="loadAdminUsers()" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-xs font-semibold rounded-xl hover:bg-slate-200 transition">
+            Refresh Users
+          </button>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 dark:bg-slate-800/50 text-slate-400 uppercase font-bold">
+              <tr>
+                <th class="p-3.5">ID</th>
+                <th class="p-3.5">User Email</th>
+                <th class="p-3.5">Full Name</th>
+                <th class="p-3.5">Role</th>
+                <th class="p-3.5">Status</th>
+                <th class="p-3.5">Total Predictions</th>
+                <th class="p-3.5">Created At</th>
+              </tr>
+            </thead>
+            <tbody id="adminUsersTbody" class="divide-y divide-slate-100 dark:divide-slate-800">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- VIEW 15: DATASET MANAGEMENT -->
+      <!-- ======================================================== -->
+      <section id="tab-dataset" class="tab-pane hidden space-y-6 fade-in">
+        <div>
+          <h2 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Dataset Management & Provenance</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Verification of authentic Kaggle Medical Cost Personal Dataset.</p>
+        </div>
+
+        <div class="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+              <span class="text-xs text-slate-400">Dataset Origin</span>
+              <p class="text-sm font-bold text-slate-900 dark:text-white mt-0.5">Kaggle Medical Cost Personal Dataset</p>
+            </div>
+            <div class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+              <span class="text-xs text-slate-400">Total Validated Samples</span>
+              <p class="text-sm font-bold text-slate-900 dark:text-white mt-0.5">1,338 Records (0 Missing Values)</p>
+            </div>
+            <div class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+              <span class="text-xs text-slate-400">SHA-256 Checksum</span>
+              <p class="text-xs font-mono font-bold text-brand-600 dark:text-cyan-400 truncate mt-0.5">c76e2c340d89e4c...Verified</p>
+            </div>
+          </div>
+
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mt-4">Feature Data Dictionary</h4>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 dark:bg-slate-800/50 text-slate-400 uppercase">
+                <tr><th class="p-2.5">Feature</th><th class="p-2.5">Type</th><th class="p-2.5">Range / Values</th><th class="p-2.5">Actuarial Role</th></tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                <tr><td class="p-2.5 font-bold">age</td><td class="p-2.5">Integer</td><td class="p-2.5">18 – 64</td><td class="p-2.5">Primary chronological risk factor</td></tr>
+                <tr><td class="p-2.5 font-bold">sex</td><td class="p-2.5">Categorical</td><td class="p-2.5">male, female</td><td class="p-2.5">Biological demographic attribute</td></tr>
+                <tr><td class="p-2.5 font-bold">bmi</td><td class="p-2.5">Float</td><td class="p-2.5">15.96 – 53.13</td><td class="p-2.5">Metabolic cardiovascular risk indicator</td></tr>
+                <tr><td class="p-2.5 font-bold">children</td><td class="p-2.5">Integer</td><td class="p-2.5">0 – 5</td><td class="p-2.5">Dependent family coverage multiplier</td></tr>
+                <tr><td class="p-2.5 font-bold">smoker</td><td class="p-2.5">Categorical</td><td class="p-2.5">yes, no</td><td class="p-2.5">Highest coefficient non-linear driver</td></tr>
+                <tr><td class="p-2.5 font-bold">region</td><td class="p-2.5">Categorical</td><td class="p-2.5">northeast, northwest, southeast, southwest</td><td class="p-2.5">Geographic medical cost variation</td></tr>
+                <tr><td class="p-2.5 font-bold text-brand-600">charges</td><td class="p-2.5 font-bold text-brand-600">Target (Float)</td><td class="p-2.5">$1,121.87 – $63,770.43</td><td class="p-2.5">Annual billed medical insurance charges</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- VIEW 16: MODEL MANAGEMENT & REGISTRY -->
+      <!-- ======================================================== -->
+      <section id="tab-models" class="tab-pane hidden space-y-6 fade-in">
+        <div>
+          <h2 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">MLOps Model Registry & Champions</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Model versions, active production champion, and hyperparameter logs.</p>
+        </div>
+
+        <div class="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+            <div>
+              <span class="text-xs text-slate-400 font-semibold">Active Production Model</span>
+              <h3 class="text-base font-bold text-brand-600 dark:text-cyan-400">Tuned Ensemble (Gradient Boosting + Ridge)</h3>
+            </div>
+            <span class="px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-xs font-bold">
+              VERSION v2.4.0-CHAMPION
+            </span>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+            <div class="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl">
+              <span class="text-slate-400">Validation R²</span>
+              <p class="font-bold text-sm text-slate-800 dark:text-slate-200 mt-0.5">0.9024</p>
+            </div>
+            <div class="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl">
+              <span class="text-slate-400">RMSE</span>
+              <p class="font-bold text-sm text-slate-800 dark:text-slate-200 mt-0.5">$4,601.15</p>
+            </div>
+            <div class="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl">
+              <span class="text-slate-400">MAE</span>
+              <p class="font-bold text-sm text-slate-800 dark:text-slate-200 mt-0.5">$2,971.74</p>
+            </div>
+            <div class="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl">
+              <span class="text-slate-400">Conformal Quantile</span>
+              <p class="font-bold text-sm text-slate-800 dark:text-slate-200 mt-0.5">$3,347.92</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- VIEW 17: SYSTEM MONITORING & AUDIT -->
+      <!-- ======================================================== -->
+      <section id="tab-monitoring" class="tab-pane hidden space-y-6 fade-in">
+        <div>
+          <h2 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">System Monitoring & Real-Time Audit Stream</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Live API health, database connection status, and tamper-resistant audit logs.</p>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+          <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+            <h4 class="text-sm font-bold text-slate-900 dark:text-white">Real-Time Security Audit Stream</h4>
+            <span class="text-xs text-slate-400">Latest 25 Events</span>
+          </div>
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 dark:bg-slate-800/50 text-slate-400 uppercase font-bold">
+              <tr>
+                <th class="p-3.5">Timestamp</th>
+                <th class="p-3.5">Action</th>
+                <th class="p-3.5">Resource</th>
+                <th class="p-3.5">Client IP</th>
+              </tr>
+            </thead>
+            <tbody id="auditLogsTbody" class="divide-y divide-slate-100 dark:divide-slate-800 font-mono">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- AUTH MODAL (SIGN IN, REGISTER, RESET PASSWORD) -->
+  <!-- ======================================================== -->
+  <div id="authModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-700 fade-in">
+      
+      <!-- Modal Header -->
+      <div class="flex justify-between items-start mb-4">
+        <div>
+          <h3 id="authModalTitle" class="text-lg font-bold text-slate-900 dark:text-white">Sign In to MEDINSIGHT AI</h3>
+          <p id="authModalSubtitle" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Access your prediction history, audit logs, and analytics.</p>
+        </div>
+        <button onclick="closeAuthModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-lg p-1 -mr-1 -mt-1 rounded-lg">✕</button>
+      </div>
+
+      <!-- Segmented Tab Navigation -->
+      <div class="flex p-1 bg-slate-100 dark:bg-slate-700/60 rounded-xl mb-4 text-xs font-semibold">
+        <button type="button" id="tabBtnLogin" onclick="switchAuthTab('login')" class="flex-1 py-1.5 rounded-lg transition bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm">
+          Sign In
+        </button>
+        <button type="button" id="tabBtnRegister" onclick="switchAuthTab('register')" class="flex-1 py-1.5 rounded-lg transition text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+          Register
+        </button>
+        <button type="button" id="tabBtnForgot" onclick="switchAuthTab('forgot')" class="flex-1 py-1.5 rounded-lg transition text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+          Reset Password
+        </button>
+      </div>
+
+      <!-- Error / Success Alert Banners -->
+      <div id="authModalError" class="hidden mb-4 p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-700 dark:text-rose-300 text-xs rounded-xl flex items-start space-x-2">
+        <span class="text-sm">⚠️</span>
+        <span id="authErrorText" class="flex-1"></span>
+      </div>
+
+      <div id="authModalSuccess" class="hidden mb-4 p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900 text-emerald-700 dark:text-emerald-300 text-xs rounded-xl flex items-start space-x-2">
+        <span class="text-sm">✅</span>
+        <span id="authSuccessText" class="flex-1"></span>
+      </div>
+
+      <!-- VIEW 1: SIGN IN -->
+      <form id="formLogin" class="space-y-3.5">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Email Address</label>
+          <input type="email" id="loginEmail" required class="w-full px-3 py-2 border rounded-xl text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-white" placeholder="admin@health.ai">
+        </div>
+
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Password</label>
+            <button type="button" onclick="switchAuthTab('forgot')" class="text-[11px] text-brand-600 hover:underline">Forgot password?</button>
+          </div>
+          <input type="password" id="loginPassword" required class="w-full px-3 py-2 border rounded-xl text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-white" placeholder="••••••••">
+        </div>
+
+        <button type="submit" id="loginSubmitBtn" class="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm shadow-md transition flex items-center justify-center space-x-2">
+          <span>Sign In</span>
+        </button>
+
+        <!-- Quick Demo Credentials Selector -->
+        <div class="pt-2 border-t border-slate-100 dark:border-slate-700">
+          <p class="text-[11px] font-medium text-slate-400 mb-1.5 text-center">Quick Demo Autofill:</p>
+          <div class="flex space-x-2">
+            <button type="button" onclick="autofillLogin('admin@health.ai', 'AdminPass123!')" class="flex-1 py-1 px-2 text-[11px] bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg text-slate-600 dark:text-slate-300 truncate">
+              👑 Admin Demo
+            </button>
+            <button type="button" onclick="autofillLogin('vishwaschinnu05@gmail.com', 'Vishwas123!')" class="flex-1 py-1 px-2 text-[11px] bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg text-slate-600 dark:text-slate-300 truncate">
+              👤 User Demo
+            </button>
+          </div>
+        </div>
+
+        <p class="text-center text-[11px] text-slate-400 pt-1">
+          Don't have an account? <button type="button" onclick="switchAuthTab('register')" class="text-brand-600 font-semibold hover:underline">Register here</button>
+        </p>
+      </form>
+
+      <!-- VIEW 2: REGISTER -->
+      <form id="formRegister" class="hidden space-y-3.5">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Full Name</label>
+          <input type="text" id="regFullName" required class="w-full px-3 py-2 border rounded-xl text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-white" placeholder="Dr. Sarah Jenkins">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Email Address</label>
+          <input type="email" id="regEmail" required class="w-full px-3 py-2 border rounded-xl text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-white" placeholder="sarah.jenkins@hospital.org">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Password (min. 6 characters)</label>
+          <input type="password" id="regPassword" minlength="6" required class="w-full px-3 py-2 border rounded-xl text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-white" placeholder="••••••••">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Account Role</label>
+          <select id="regRole" class="w-full px-3 py-2 border rounded-xl text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+            <option value="user">Policyholder / Standard User</option>
+            <option value="data_scientist">Data Scientist / Analyst</option>
+            <option value="underwriter">Insurance Underwriter</option>
+          </select>
+        </div>
+
+        <button type="submit" id="regSubmitBtn" class="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm shadow-md transition">
+          Create Account & Sign In
+        </button>
+
+        <p class="text-center text-[11px] text-slate-400">
+          Already registered? <button type="button" onclick="switchAuthTab('login')" class="text-brand-600 font-semibold hover:underline">Sign In</button>
+        </p>
+      </form>
+
+      <!-- VIEW 3: FORGOT & RESET PASSWORD -->
+      <div id="formForgot" class="hidden space-y-4">
+        <div class="p-3.5 bg-slate-50 dark:bg-slate-750 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2.5">
+          <span class="text-xs font-bold text-slate-800 dark:text-slate-200">Step 1: Request Reset Token</span>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400">Enter your registered email to dispatch a secure 1-hour reset token.</p>
+          <div class="flex space-x-2">
+            <input type="email" id="forgotEmail" class="flex-1 px-3 py-1.5 border rounded-xl text-xs dark:bg-slate-700 dark:border-slate-600 dark:text-white" placeholder="your.email@health.ai">
+            <button type="button" onclick="handleForgotPasswordRequest()" id="btnRequestToken" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-semibold whitespace-nowrap">
+              Get Token
+            </button>
+          </div>
+        </div>
+
+        <form id="formResetSubmit" onsubmit="handleResetPasswordSubmit(event)" class="p-3.5 bg-slate-50 dark:bg-slate-750 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2.5">
+          <span class="text-xs font-bold text-slate-800 dark:text-slate-200">Step 2: Set New Password</span>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Reset Token</label>
+            <input type="text" id="resetTokenInput" required class="w-full px-3 py-1.5 font-mono text-xs border rounded-xl dark:bg-slate-700 dark:border-slate-600 dark:text-white" placeholder="Paste reset token here">
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">New Password (min 6 characters)</label>
+            <input type="password" id="resetNewPassword" minlength="6" required class="w-full px-3 py-1.5 text-xs border rounded-xl dark:bg-slate-700 dark:border-slate-600 dark:text-white" placeholder="••••••••">
+          </div>
+          <button type="submit" id="btnApplyReset" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs rounded-xl shadow-sm transition">
+            Update Password
+          </button>
+        </form>
+
+        <p class="text-center text-[11px] text-slate-400">
+          Remember your password? <button type="button" onclick="switchAuthTab('login')" class="text-brand-600 font-semibold hover:underline">Return to Sign In</button>
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+  <!-- ======================================================== -->
+  <!-- JAVASCRIPT APPLICATION CORE -->
+  <!-- ======================================================== -->
+  <script>
+    const API_BASE = "/api";
+    let authToken = localStorage.getItem("token") || "";
+    let currentUser = null;
+    let lastPredictionData = null;
+
+    // Chart instances
+    let chartChargesDistInst = null;
+    let chartAgeCohortInst = null;
+    let chartRiskFeatureSensInst = null;
+    let chartModelR2Inst = null;
+    let chartModelRmseInst = null;
+    let chartActualVsPredInst = null;
+    let chartResidualDistInst = null;
+    let chartAnalyticsFeatureImpInst = null;
+    let chartSimComparisonInst = null;
+
+    // Toast Notification Utility
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      if (!container) return;
+      const toast = document.createElement('div');
+      const bg = type === 'success' ? 'bg-emerald-600 text-white' : type === 'error' ? 'bg-rose-600 text-white' : 'bg-slate-900 text-white';
+      toast.className = `pointer-events-auto px-4 py-2.5 rounded-xl shadow-xl text-xs font-semibold flex items-center space-x-2 ${bg} fade-in transition duration-300`;
+      toast.innerHTML = `<span>${type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ'}</span><span>${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    // Tab Navigation across all 17 Views
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+      const targetPane = document.getElementById(`tab-${tabId}`);
+      if (targetPane) targetPane.classList.remove('hidden');
+
+      // Update sidebar nav active styling
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.className = "nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-xl font-medium text-xs transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800";
+      });
+      const activeBtn = document.getElementById(`nav-${tabId}`);
+      if (activeBtn) {
+        activeBtn.className = "nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-xl font-medium text-xs transition bg-brand-600 text-white shadow-sm";
+      }
+
+      // Trigger lazy data loading
+      if (tabId === 'dashboard') loadDashboardData();
+      if (tabId === 'analytics') loadAnalyticsData();
+      if (tabId === 'history') loadHistoryData();
+      if (tabId === 'comparison') loadPlansData();
+      if (tabId === 'admin') loadAdminData();
+      if (tabId === 'users') loadAdminUsers();
+      if (tabId === 'monitoring') loadMonitoringData();
+      if (tabId === 'risk') loadRiskData();
+      if (tabId === 'profile') populateProfileView();
+
+      // Close mobile sidebar if open
+      const sb = document.getElementById('sidebar');
+      if (sb && !sb.classList.contains('-translate-x-full') && window.innerWidth < 1024) {
+        sb.classList.add('-translate-x-full');
+      }
+    }
+
+    // Mobile Sidebar Toggle
+    document.getElementById('mobileMenuToggle').addEventListener('click', () => {
+      const sb = document.getElementById('sidebar');
+      sb.classList.toggle('-translate-x-full');
+    });
+
+    // Theme Toggle
+    document.getElementById('themeToggleBtn').addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+      const isDark = document.documentElement.classList.contains('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      document.getElementById('themeToggleBtn').innerText = isDark ? "☀️" : "🌙";
+    });
+    if (localStorage.getItem('theme') === 'dark') {
+      document.documentElement.classList.add('dark');
+      document.getElementById('themeToggleBtn').innerText = "☀️";
+    }
+
+    // BMI Slider sync
+    const inputBmi = document.getElementById('inputBmi');
+    const bmiDisplayVal = document.getElementById('bmiDisplayVal');
+    inputBmi.addEventListener('input', (e) => {
+      bmiDisplayVal.innerText = parseFloat(e.target.value).toFixed(1);
+    });
+
+    // What-If Sliders sync
+    const simAge = document.getElementById('simAge');
+    const simAgeVal = document.getElementById('simAgeVal');
+    simAge.addEventListener('input', (e) => simAgeVal.innerText = e.target.value);
+    const simBmi = document.getElementById('simBmi');
+    const simBmiVal = document.getElementById('simBmiVal');
+    simBmi.addEventListener('input', (e) => simBmiVal.innerText = parseFloat(e.target.value).toFixed(1));
+
+    // ==========================================
+    // AUTH MODAL & SESSION HYDRATION
+    // ==========================================
+    function openAuthModal(initialTab = 'login') {
+      document.getElementById('authModal').classList.remove('hidden');
+      switchAuthTab(initialTab);
+      clearAuthAlerts();
+    }
+
+    function closeAuthModal() {
+      document.getElementById('authModal').classList.add('hidden');
+      clearAuthAlerts();
+    }
+
+    function clearAuthAlerts() {
+      const errBox = document.getElementById('authModalError');
+      const succBox = document.getElementById('authModalSuccess');
+      if (errBox) errBox.classList.add('hidden');
+      if (succBox) succBox.classList.add('hidden');
+    }
+
+    function showAuthError(msg) {
+      clearAuthAlerts();
+      const errBox = document.getElementById('authModalError');
+      const errText = document.getElementById('authErrorText');
+      if (errBox && errText) {
+        errText.innerText = msg;
+        errBox.classList.remove('hidden');
+      }
+    }
+
+    function showAuthSuccess(msg) {
+      clearAuthAlerts();
+      const succBox = document.getElementById('authModalSuccess');
+      const succText = document.getElementById('authSuccessText');
+      if (succBox && succText) {
+        succText.innerText = msg;
+        succBox.classList.remove('hidden');
+      }
+    }
+
+    function switchAuthTab(tab) {
+      clearAuthAlerts();
+      const views = {
+        login: document.getElementById('formLogin'),
+        register: document.getElementById('formRegister'),
+        forgot: document.getElementById('formForgot')
+      };
+      const buttons = {
+        login: document.getElementById('tabBtnLogin'),
+        register: document.getElementById('tabBtnRegister'),
+        forgot: document.getElementById('tabBtnForgot')
+      };
+      const title = document.getElementById('authModalTitle');
+
+      Object.keys(views).forEach(k => {
+        if (views[k]) views[k].classList.toggle('hidden', k !== tab);
+      });
+
+      const activeBtnClass = "flex-1 py-1.5 rounded-lg transition bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm";
+      const inactiveBtnClass = "flex-1 py-1.5 rounded-lg transition text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
+
+      Object.keys(buttons).forEach(k => {
+        if (buttons[k]) buttons[k].className = (k === tab) ? activeBtnClass : inactiveBtnClass;
+      });
+
+      if (tab === 'login') title.innerText = "Sign In to MEDINSIGHT AI";
+      if (tab === 'register') title.innerText = "Create Enterprise Account";
+      if (tab === 'forgot') title.innerText = "Reset Your Password";
+    }
+
+    function autofillLogin(email, password) {
+      document.getElementById('loginEmail').value = email;
+      document.getElementById('loginPassword').value = password;
+      clearAuthAlerts();
+      if (!password) document.getElementById('loginPassword').focus();
+    }
+
+    async function restoreUserSession() {
+      if (!authToken) {
+        renderUserBadge();
+        return;
+      }
+      try {
+        const res = await fetch(`${API_BASE}/auth/me`, {
+          headers: { "Authorization": `Bearer ${authToken}` }
+        });
+        if (res.ok) {
+          currentUser = await res.json();
+          renderUserBadge();
+        } else {
+          authToken = "";
+          currentUser = null;
+          localStorage.removeItem("token");
+          renderUserBadge();
+        }
+      } catch (e) {
+        renderUserBadge();
+      }
+    }
+
+    function renderUserBadge() {
+      const area = document.getElementById('userBadgeArea');
+      if (!area) return;
+      if (currentUser) {
+        area.innerHTML = `
+          <div class="flex items-center space-x-2">
+            <div class="flex items-center space-x-1.5 px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+              <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+              <span class="text-xs font-semibold text-slate-800 dark:text-slate-200">${currentUser.full_name || currentUser.email}</span>
+              <span class="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded ${currentUser.role === 'admin' ? 'bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300' : 'bg-brand-100 dark:bg-brand-900/60 text-brand-700 dark:text-brand-300'}">${currentUser.role}</span>
+            </div>
+            <button onclick="handleLogout()" class="px-2.5 py-1 text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg border border-rose-200 dark:border-rose-900 transition">
+              Sign Out
+            </button>
+          </div>
+        `;
+      } else {
+        area.innerHTML = `
+          <button onclick="openAuthModal('login')" class="px-3.5 py-1.5 text-xs font-bold rounded-xl bg-brand-600 hover:bg-brand-700 text-white shadow-sm transition">
+            Sign In / Register
+          </button>
+        `;
+      }
+      populateProfileView();
+    }
+
+    function populateProfileView() {
+      const profEmail = document.getElementById('profEmail');
+      const profName = document.getElementById('profName');
+      const profRole = document.getElementById('profRole');
+      const profInputName = document.getElementById('profInputName');
+      if (currentUser) {
+        if (profEmail) profEmail.innerText = currentUser.email;
+        if (profName) profName.innerText = currentUser.full_name || "N/A";
+        if (profRole) profRole.innerText = currentUser.role;
+        if (profInputName) profInputName.value = currentUser.full_name || "";
+      } else {
+        if (profEmail) profEmail.innerText = "Guest (Unauthenticated)";
+        if (profName) profName.innerText = "Guest User";
+        if (profRole) profRole.innerText = "GUEST";
+      }
+    }
+
+    async function handleLogout() {
+      try {
+        if (authToken) {
+          await fetch(`${API_BASE}/auth/logout`, {
+            method: "POST",
+            headers: { "Authorization": `Bearer ${authToken}` }
+          });
+        }
+      } catch (e) {}
+      authToken = "";
+      currentUser = null;
+      localStorage.removeItem("token");
+      renderUserBadge();
+      showToast("Signed out successfully.");
+    }
+
+    // Form Event: Login
+    document.getElementById('formLogin').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearAuthAlerts();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
+
+      try {
+        const res = await fetch(`${API_BASE}/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Authentication failed.");
+
+        authToken = data.access_token;
+        localStorage.setItem("token", authToken);
+        currentUser = data.user;
+        renderUserBadge();
+        closeAuthModal();
+        showToast(`Welcome back, ${currentUser.full_name || currentUser.email}!`, "success");
+      } catch (err) {
+        showAuthError(err.message);
+      }
+    });
+
+    // Form Event: Register
+    document.getElementById('formRegister').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearAuthAlerts();
+      const full_name = document.getElementById('regFullName').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const password = document.getElementById('regPassword').value.trim();
+      const role = document.getElementById('regRole').value;
+
+      try {
+        const res = await fetch(`${API_BASE}/auth/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ full_name, email, password, role })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Registration failed.");
+
+        authToken = data.access_token;
+        localStorage.setItem("token", authToken);
+        currentUser = data.user;
+        renderUserBadge();
+        closeAuthModal();
+        showToast(`Account created! Welcome, ${currentUser.full_name || currentUser.email}!`, "success");
+      } catch (err) {
+        showAuthError(err.message);
+      }
+    });
+
+    // Form Event: Forgot Password Request
+    async function handleForgotPasswordRequest() {
+      clearAuthAlerts();
+      const email = document.getElementById('forgotEmail').value.trim();
+      if (!email) {
+        showAuthError("Please provide an email address.");
+        return;
+      }
+      try {
+        const res = await fetch(`${API_BASE}/auth/forgot-password`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email })
+        });
+        const data = await res.json();
+        if (data.reset_token) {
+          document.getElementById('resetTokenInput').value = data.reset_token;
+          showAuthSuccess("Reset token generated! Auto-filled in Step 2 below. Please choose your new password.");
+          document.getElementById('resetNewPassword').focus();
+        } else {
+          showAuthSuccess(data.message);
+        }
+      } catch (err) {
+        showAuthError(err.message);
+      }
+    }
+
+    // Form Event: Reset Password Submit
+    async function handleResetPasswordSubmit(e) {
+      e.preventDefault();
+      clearAuthAlerts();
+      const token = document.getElementById('resetTokenInput').value.trim();
+      const new_password = document.getElementById('resetNewPassword').value.trim();
+
+      try {
+        const res = await fetch(`${API_BASE}/auth/reset-password`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token, new_password })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Password reset failed.");
+
+        showToast("Password updated successfully! Please sign in with your new password.", "success");
+        switchAuthTab('login');
+        showAuthSuccess("Password successfully updated! Please sign in with your new credentials.");
+      } catch (err) {
+        showAuthError(err.message);
+      }
+    }
+
+    // Form Event: Profile Update
+    document.getElementById('profileUpdateForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!authToken) {
+        showToast("Please sign in to update your profile.", "error");
+        return;
+      }
+      const full_name = document.getElementById('profInputName').value.trim();
+      const new_password = document.getElementById('profInputNewPass').value.trim();
+      const payload = { full_name };
+      if (new_password) payload.new_password = new_password;
+
+      try {
+        const res = await fetch(`${API_BASE}/auth/profile`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${authToken}`
+          },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Failed to update profile.");
+        currentUser = data;
+        renderUserBadge();
+        showToast("Profile successfully updated!", "success");
+      } catch (err) {
+        showToast(err.message, "error");
+      }
+    });
+
+    // ==========================================
+    // PREDICTION ENGINE & SHAP EXPLAINABILITY
+    // ==========================================
+    document.getElementById('predictionForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const payload = {
+        age: parseInt(document.getElementById('inputAge').value),
+        sex: document.getElementById('inputSex').value,
+        bmi: parseFloat(document.getElementById('inputBmi').value),
+        children: parseInt(document.getElementById('inputChildren').value),
+        smoker: document.getElementById('inputSmoker').value,
+        region: document.getElementById('inputRegion').value
+      };
+      await executePrediction(payload);
+    });
+
+    function quickPreviewPredict(age, sex, bmi, children, smoker, region) {
+      document.getElementById('inputAge').value = age;
+      document.getElementById('inputSex').value = sex;
+      document.getElementById('inputBmi').value = bmi;
+      document.getElementById('bmiDisplayVal').innerText = bmi.toFixed(1);
+      document.getElementById('inputChildren').value = children;
+      document.getElementById('inputSmoker').value = smoker;
+      document.getElementById('inputRegion').value = region;
+      switchTab('predict');
+      executePrediction({ age, sex, bmi, children, smoker, region });
+    }
+
+    async function executePrediction(payload) {
+      const btn = document.getElementById('btnRunPrediction');
+      btn.disabled = true;
+      btn.innerText = "Analyzing Actuarial Risk Features...";
+
+      try {
+        const headers = { "Content-Type": "application/json" };
+        if (authToken) headers["Authorization"] = `Bearer ${authToken}`;
+
+        const res = await fetch(`${API_BASE}/predict`, {
+          method: "POST",
+          headers,
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Prediction request failed.");
+
+        lastPredictionData = data;
+        renderPredictionResults(data);
+        showToast("Actuarial prediction & SHAP decomposition generated!", "success");
+      } catch (err) {
+        showToast(err.message, "error");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "⚡ Calculate Expected Insurance Charges";
+      }
+    }
+
+    function renderPredictionResults(data) {
+      document.getElementById('predictPromptCard').classList.add('hidden');
+      document.getElementById('predictionResultCard').classList.remove('hidden');
+      document.getElementById('shapCard').classList.remove('hidden');
+      document.getElementById('clinicalGuidanceCard').classList.remove('hidden');
+
+      document.getElementById('resAnnualCost').innerText = data.formatted_annual_cost;
+      document.getElementById('resMonthlyCost').innerText = `Approx. ${data.formatted_monthly_cost} / month`;
+      document.getElementById('resBounds').innerText = `${data.conformal_interval.lower_bound ? '$' + data.conformal_interval.lower_bound.toLocaleString() : '$0'} – $${data.conformal_interval.upper_bound.toLocaleString()}`;
+
+      const badge = document.getElementById('resRiskBadge');
+      badge.innerText = data.risk_tier;
+      if (data.risk_tier === "Critical Risk") {
+        badge.className = "px-3.5 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/40";
+      } else if (data.risk_tier === "High Risk") {
+        badge.className = "px-3.5 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40";
+      } else {
+        badge.className = "px-3.5 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40";
+      }
+
+      // Download PDF Link
+      if (data.prediction_id) {
+        document.getElementById('downloadResultPdfLink').href = `${API_BASE}/history/${data.prediction_id}/pdf`;
+        document.getElementById('downloadResultPdfLink').classList.remove('hidden');
+      } else {
+        document.getElementById('downloadResultPdfLink').classList.add('hidden');
+      }
+
+      // Render SHAP waterfall
+      const shapBox = document.getElementById('shapWaterfallContainer');
+      shapBox.innerHTML = "";
+      if (data.shap_contributions) {
+        data.shap_contributions.forEach(item => {
+          const isUp = item.impact_direction === "increases_cost";
+          const barColor = isUp ? "bg-rose-500" : "bg-emerald-500";
+          const sign = isUp ? "+" : "-";
+          const pctWidth = Math.min(Math.abs(item.percentage_influence) * 1.5, 100);
+
+          const row = document.createElement('div');
+          row.className = "p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl space-y-1";
+          row.innerHTML = `
+            <div class="flex justify-between text-xs">
+              <span class="font-bold text-slate-700 dark:text-slate-200">${item.feature} = ${item.feature_value}</span>
+              <span class="font-mono font-bold ${isUp ? 'text-rose-600' : 'text-emerald-600'}">${sign}$${Math.abs(item.contribution_amount).toFixed(2)}</span>
+            </div>
+            <div class="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+              <div class="${barColor} h-2 rounded-full" style="width: ${pctWidth}%"></div>
+            </div>
+          `;
+          shapBox.appendChild(row);
+        });
+      }
+
+      // Guidance
+      const guidanceBox = document.getElementById('clinicalGuidanceList');
+      guidanceBox.innerHTML = "";
+      if (data.clinical_recommendations) {
+        data.clinical_recommendations.forEach(rec => {
+          const li = document.createElement('li');
+          li.innerText = rec;
+          guidanceBox.appendChild(li);
+        });
+      }
+    }
+
+    function sendPredictionToSimulator() {
+      if (lastPredictionData) {
+        switchTab('simulator');
+        document.getElementById('simAge').value = document.getElementById('inputAge').value;
+        document.getElementById('simAgeVal').innerText = document.getElementById('inputAge').value;
+        document.getElementById('simBmi').value = document.getElementById('inputBmi').value;
+        document.getElementById('simBmiVal').innerText = document.getElementById('inputBmi').value;
+        document.getElementById('simSmoker').value = document.getElementById('inputSmoker').value;
+        document.getElementById('simChildren').value = document.getElementById('inputChildren').value;
+        document.getElementById('simRegion').value = document.getElementById('inputRegion').value;
+        runSimulation();
+      }
+    }
+
+    // ==========================================
+    // WHAT-IF SIMULATOR ENGINE
+    // ==========================================
+    async function runSimulation() {
+      const baseline = {
+        age: parseInt(document.getElementById('inputAge').value || 45),
+        sex: document.getElementById('inputSex').value || "male",
+        bmi: parseFloat(document.getElementById('inputBmi').value || 32.0),
+        children: parseInt(document.getElementById('inputChildren').value || 1),
+        smoker: document.getElementById('inputSmoker').value || "yes",
+        region: document.getElementById('inputRegion').value || "southeast"
+      };
+
+      const modified = {
+        age: parseInt(document.getElementById('simAge').value),
+        sex: baseline.sex,
+        bmi: parseFloat(document.getElementById('simBmi').value),
+        children: parseInt(document.getElementById('simChildren').value),
+        smoker: document.getElementById('simSmoker').value,
+        region: document.getElementById('simRegion').value
+      };
+
+      try {
+        const res = await fetch(`${API_BASE}/predict/simulate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ baseline, modified })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Simulation failed.");
+
+        document.getElementById('simBaseCost').innerText = `$${data.baseline.estimated_annual_cost.toLocaleString()}`;
+        document.getElementById('simBaseRisk').innerText = `Risk: ${data.baseline.risk_tier}`;
+        document.getElementById('simModCost').innerText = `$${data.modified.estimated_annual_cost.toLocaleString()}`;
+        document.getElementById('simModRisk').innerText = `Risk: ${data.modified.risk_tier}`;
+
+        const isSav = data.comparison.is_savings;
+        const banner = document.getElementById('simDeltaBanner');
+        const badge = document.getElementById('simSavingsBadge');
+        const deltaVal = document.getElementById('simDeltaVal');
+
+        if (isSav) {
+          banner.className = "p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900 flex justify-between items-center";
+          badge.className = "text-xs font-bold px-3 py-1 bg-emerald-600 text-white rounded-lg";
+          badge.innerText = `Save $${data.comparison.annual_savings.toLocaleString()}/yr`;
+          deltaVal.className = "text-xl font-extrabold text-emerald-600 dark:text-emerald-400";
+          deltaVal.innerText = `-$${Math.abs(data.comparison.delta_annual_cost).toLocaleString()} (${data.comparison.percentage_change.toFixed(1)}%)`;
+        } else {
+          banner.className = "p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 flex justify-between items-center";
+          badge.className = "text-xs font-bold px-3 py-1 bg-rose-600 text-white rounded-lg";
+          badge.innerText = "Cost Surcharge";
+          deltaVal.className = "text-xl font-extrabold text-rose-600 dark:text-rose-400";
+          deltaVal.innerText = `+$${Math.abs(data.comparison.delta_annual_cost).toLocaleString()} (+${data.comparison.percentage_change.toFixed(1)}%)`;
+        }
+
+        const driversBox = document.getElementById('simDriversList');
+        driversBox.innerHTML = "";
+        data.comparison.key_drivers.forEach(d => {
+          const li = document.createElement('li');
+          li.innerText = d;
+          driversBox.appendChild(li);
+        });
+
+        // Update Comparison Chart
+        renderSimChart(data.baseline.estimated_annual_cost, data.modified.estimated_annual_cost);
+      } catch (err) {
+        showToast(err.message, "error");
+      }
+    }
+
+    function resetSimulator() {
+      document.getElementById('simAge').value = 35;
+      document.getElementById('simAgeVal').innerText = "35";
+      document.getElementById('simBmi').value = 24.5;
+      document.getElementById('simBmiVal').innerText = "24.5";
+      document.getElementById('simSmoker').value = "no";
+      document.getElementById('simChildren').value = "0";
+      runSimulation();
+    }
+
+    function renderSimChart(baseCost, modCost) {
+      const ctx = document.getElementById('chartSimComparison');
+      if (!ctx) return;
+      if (chartSimComparisonInst) chartSimComparisonInst.destroy();
+      chartSimComparisonInst = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Baseline Scenario', 'Modified What-If Scenario'],
+          datasets: [{
+            label: 'Estimated Annual Cost ($)',
+            data: [baseCost, modCost],
+            backgroundColor: ['#64748B', modCost < baseCost ? '#10B981' : '#EF4444'],
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } }
+        }
+      });
+    }
+
+    // ==========================================
+    // AI ASSISTANT CONVERSATION ENGINE
+    // ==========================================
+    document.getElementById('assistantChatForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const input = document.getElementById('assistantInput');
+      const query = input.value.trim();
+      if (!query) return;
+      input.value = "";
+      await sendAssistantMessage(query);
+    });
+
+    function askAssistantChip(msg) {
+      sendAssistantMessage(msg);
+    }
+
+    async function sendAssistantMessage(query) {
+      const feed = document.getElementById('chatFeed');
+      
+      // User bubble
+      const userBubble = document.createElement('div');
+      userBubble.className = "flex items-start justify-end space-x-3 fade-in";
+      userBubble.innerHTML = `
+        <div class="p-3.5 rounded-2xl bg-brand-600 text-white text-xs max-w-lg shadow-sm">
+          ${query}
+        </div>
+      `;
+      feed.appendChild(userBubble);
+      feed.scrollTop = feed.scrollHeight;
+
+      // Loading bubble
+      const loadBubble = document.createElement('div');
+      loadBubble.className = "flex items-start space-x-3 max-w-2xl fade-in";
+      loadBubble.innerHTML = `
+        <div class="w-8 h-8 rounded-xl bg-brand-600 text-white flex items-center justify-center font-bold text-xs flex-shrink-0">AI</div>
+        <div class="p-3.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-xs text-slate-500 animate-pulse">
+          Analyzing actuarial knowledge base...
+        </div>
+      `;
+      feed.appendChild(loadBubble);
+      feed.scrollTop = feed.scrollHeight;
+
+      try {
+        const payload = {
+          message: query,
+          user_context: lastPredictionData ? {
+            predicted_charges: lastPredictionData.estimated_annual_cost,
+            risk_tier: lastPredictionData.risk_tier
+          } : null
+        };
+        const res = await fetch(`${API_BASE}/assistant/chat`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        loadBubble.remove();
+
+        const aiBubble = document.createElement('div');
+        aiBubble.className = "flex items-start space-x-3 max-w-2xl fade-in";
+        aiBubble.innerHTML = `
+          <div class="w-8 h-8 rounded-xl bg-brand-600 text-white flex items-center justify-center font-bold text-xs flex-shrink-0">AI</div>
+          <div class="p-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-xs text-slate-800 dark:text-slate-200 space-y-2 shadow-sm leading-relaxed">
+            <div class="whitespace-pre-line">${data.reply}</div>
+            <div class="pt-2 flex flex-wrap gap-1.5 border-t border-slate-200 dark:border-slate-700">
+              ${data.context_tags.map(t => `<span class="px-2 py-0.5 rounded bg-brand-50 dark:bg-brand-900/50 text-brand-700 dark:text-brand-300 text-[10px] font-semibold">${t}</span>`).join('')}
+            </div>
+          </div>
+        `;
+        feed.appendChild(aiBubble);
+        feed.scrollTop = feed.scrollHeight;
+      } catch (err) {
+        loadBubble.remove();
+        showToast("Assistant failed to reply.", "error");
+      }
+    }
+
+    // ==========================================
+    // INSURANCE PLAN COMPARISON
+    // ==========================================
+    async function loadPlansData() {
+      const container = document.getElementById('plansGridContainer');
+      try {
+        const res = await fetch(`${API_BASE}/plans`);
+        const plans = await res.json();
+        container.innerHTML = "";
+
+        plans.forEach(p => {
+          const card = document.createElement('div');
+          card.className = "p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-4";
+          card.innerHTML = `
+            <div>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-brand-600 dark:text-cyan-400">${p.category}</span>
+              <h3 class="text-base font-bold text-slate-900 dark:text-white mt-0.5">${p.name}</h3>
+              <p class="text-xs text-slate-400">${p.provider}</p>
+
+              <div class="my-4 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <span class="text-xs text-slate-400">Annual Premium</span>
+                <p class="text-2xl font-extrabold text-slate-900 dark:text-white">$${p.annual_premium.toLocaleString()}</p>
+                <p class="text-[11px] text-slate-500">$${p.monthly_premium.toFixed(2)} / month</p>
+              </div>
+
+              <div class="space-y-1.5 text-xs">
+                <div class="flex justify-between"><span class="text-slate-400">Deductible:</span><span class="font-bold">$${p.deductible.toLocaleString()}</span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Primary Copay:</span><span class="font-bold">${p.copay_primary}</span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Specialist:</span><span class="font-bold">${p.copay_specialist}</span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Coinsurance:</span><span class="font-bold">${p.coinsurance}</span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Waiting Period:</span><span class="font-bold text-rose-500">${p.waiting_period_preexisting}</span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Claim Settlement:</span><span class="font-bold text-emerald-600">${p.claim_settlement_ratio}</span></div>
+              </div>
+
+              <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300">Core Benefits:</span>
+                <ul class="mt-1 space-y-1 text-[11px] text-slate-500 dark:text-slate-400 list-disc list-inside">
+                  ${p.benefits.slice(0, 3).map(b => `<li>${b}</li>`).join('')}
+                </ul>
+              </div>
+            </div>
+
+            <p class="text-[10px] text-slate-400 italic pt-2">${p.suitability}</p>
+          `;
+          container.appendChild(card);
+        });
+      } catch (err) {
+        container.innerHTML = `<div class="p-4 text-center text-rose-500">Failed to load plan database.</div>`;
+      }
+    }
+
+    async function recommendPlanForCurrentProfile() {
+      const banner = document.getElementById('planRecommendationBanner');
+      const recText = document.getElementById('planRecText');
+      const payload = {
+        predicted_annual_cost: lastPredictionData ? lastPredictionData.estimated_annual_cost : 11000.0,
+        risk_tier: lastPredictionData ? lastPredictionData.risk_tier : "Moderate Risk",
+        age: parseInt(document.getElementById('inputAge').value || 38),
+        smoker: document.getElementById('inputSmoker').value || "no"
+      };
+
+      try {
+        const res = await fetch(`${API_BASE}/plans/recommend`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        recText.innerHTML = `🎯 <b>Actuarial Match: ${data.recommended_plan.name} (${data.recommended_plan.category})</b><br>${data.actuarial_rationale}`;
+        banner.classList.remove('hidden');
+      } catch (err) {
+        showToast("Failed to recommend plan.", "error");
+      }
+    }
+
+    // ==========================================
+    // PREDICTION HISTORY TABLE
+    // ==========================================
+    async function loadHistoryData() {
+      const filter = document.getElementById('historyFilterRisk').value;
+      const url = filter ? `${API_BASE}/history?risk_tier=${filter}` : `${API_BASE}/history`;
+      const tbody = document.getElementById('historyTbody');
+      tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400">Loading records...</td></tr>`;
+
+      try {
+        const headers = {};
+        if (authToken) headers["Authorization"] = `Bearer ${authToken}`;
+        const res = await fetch(url, { headers });
+        const data = await res.json();
+        tbody.innerHTML = "";
+        if (data.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400">No predictions recorded yet.</td></tr>`;
+          return;
+        }
+
+        data.forEach(r => {
+          const tr = document.createElement('tr');
+          tr.className = "hover:bg-slate-50/50 dark:hover:bg-slate-800/30";
+          tr.innerHTML = `
+            <td class="p-3.5 font-mono text-slate-400">#${r.id}</td>
+            <td class="p-3.5"><span class="font-bold">${r.age} yrs</span> • ${r.sex} • BMI ${r.bmi.toFixed(1)}</td>
+            <td class="p-3.5"><span class="font-semibold mr-1 ${r.smoker === 'yes' ? 'text-rose-600' : 'text-emerald-600'}">${r.smoker.toUpperCase()}</span> • ${r.region}</td>
+            <td class="p-3.5 font-bold text-slate-900 dark:text-white">$${r.predicted_charges.toLocaleString()}</td>
+            <td class="p-3.5 text-slate-500">$${r.confidence_lower.toLocaleString()} – $${r.confidence_upper.toLocaleString()}</td>
+            <td class="p-3.5 font-semibold text-slate-700 dark:text-slate-300">${r.risk_tier}</td>
+            <td class="p-3.5 text-right space-x-2">
+              <a href="${API_BASE}/history/${r.id}/pdf" class="px-2.5 py-1 bg-brand-50 dark:bg-brand-900/40 text-brand-600 dark:text-cyan-300 rounded font-semibold hover:underline">PDF</a>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-rose-500">Failed to load history records.</td></tr>`;
+      }
+    }
+    document.getElementById('historyFilterRisk').addEventListener('change', loadHistoryData);
+
+    // ==========================================
+    // ML ANALYTICS DATA & CHARTS
+    // ==========================================
+    async function loadAnalyticsData() {
+      try {
+        const [benchmarks, features, residuals, actualVsPred] = await Promise.all([
+          fetch(`${API_BASE}/analytics/benchmarks`).then(r => r.json()).catch(() => []),
+          fetch(`${API_BASE}/analytics/feature-importance`).then(r => r.json()).catch(() => []),
+          fetch(`${API_BASE}/analytics/residuals`).then(r => r.json()).catch(() => ({ bins: [], counts: [] })),
+          fetch(`${API_BASE}/analytics/actual-vs-predicted`).then(r => r.json()).catch(() => [])
+        ]);
+
+        // 1. Populate Benchmarks Table
+        const tbody = document.getElementById('benchmarksTbody');
+        if (tbody && Array.isArray(benchmarks)) {
+          tbody.innerHTML = "";
+          benchmarks.forEach(b => {
+            const isBest = b.is_champion || b.algorithm.includes("Tuned") || b.algorithm.includes("Gradient") || b.algorithm.includes("Ensemble");
+            const tr = document.createElement('tr');
+            tr.className = isBest ? "bg-cyan-50/60 dark:bg-cyan-950/30 font-bold" : "";
+            tr.innerHTML = `
+              <td class="p-3.5 font-sans flex items-center space-x-2">
+                ${isBest ? '<span class="text-clinical-cyan">★</span>' : ''}
+                <span>${b.algorithm}</span>
+              </td>
+              <td class="p-3.5">${(b.cv_r2_mean != null ? b.cv_r2_mean : 0).toFixed(4)}</td>
+              <td class="p-3.5 text-brand-600 dark:text-cyan-400 font-bold">${(b.r2_score != null ? b.r2_score : 0).toFixed(4)}</td>
+              <td class="p-3.5">$${(b.rmse != null ? b.rmse : 0).toLocaleString()}</td>
+              <td class="p-3.5">$${(b.mae != null ? b.mae : 0).toLocaleString()}</td>
+              <td class="p-3.5">${isBest ? '<span class="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold">★ Active Champion</span>' : '<span class="text-slate-400 text-[11px]">Benchmarked</span>'}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
+
+        // 2. Chart R2 Comparison
+        const ctxR2 = document.getElementById('chartModelR2');
+        if (ctxR2 && Array.isArray(benchmarks) && benchmarks.length > 0) {
+          if (chartModelR2Inst) chartModelR2Inst.destroy();
+          chartModelR2Inst = new Chart(ctxR2, {
+            type: 'bar',
+            data: {
+              labels: benchmarks.map(b => b.algorithm),
+              datasets: [{
+                label: 'Test R² Score',
+                data: benchmarks.map(b => b.r2_score),
+                backgroundColor: benchmarks.map(b => (b.is_champion || b.algorithm.includes('Tuned')) ? '#10B981' : '#0077B6'),
+                borderRadius: 6
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: {
+                y: { min: 0.70, max: 0.95, title: { display: true, text: 'R² Score' } }
+              }
+            }
+          });
+        }
+
+        // 3. Chart RMSE Comparison
+        const ctxRmse = document.getElementById('chartModelRmse');
+        if (ctxRmse && Array.isArray(benchmarks) && benchmarks.length > 0) {
+          if (chartModelRmseInst) chartModelRmseInst.destroy();
+          chartModelRmseInst = new Chart(ctxRmse, {
+            type: 'bar',
+            data: {
+              labels: benchmarks.map(b => b.algorithm),
+              datasets: [{
+                label: 'Test RMSE ($)',
+                data: benchmarks.map(b => b.rmse),
+                backgroundColor: benchmarks.map(b => (b.is_champion || b.algorithm.includes('Tuned')) ? '#10B981' : '#00B4D8'),
+                borderRadius: 6
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: {
+                y: { title: { display: true, text: 'RMSE ($)' } }
+              }
+            }
+          });
+        }
+
+        // 4. Chart Actual vs. Predicted Scatter Plot
+        const ctxAvp = document.getElementById('chartActualVsPred');
+        if (ctxAvp && Array.isArray(actualVsPred) && actualVsPred.length > 0) {
+          if (chartActualVsPredInst) chartActualVsPredInst.destroy();
+          chartActualVsPredInst = new Chart(ctxAvp, {
+            type: 'scatter',
+            data: {
+              datasets: [
+                {
+                  label: 'Validation Test Samples',
+                  data: actualVsPred.map(pt => ({ x: pt.actual, y: pt.predicted })),
+                  backgroundColor: 'rgba(0, 180, 216, 0.75)',
+                  borderColor: '#0077B6',
+                  pointRadius: 5,
+                  pointHoverRadius: 7
+                },
+                {
+                  label: 'Ideal 45° Fit Line (y = x)',
+                  type: 'line',
+                  data: [
+                    { x: 0, y: 0 },
+                    { x: 65000, y: 65000 }
+                  ],
+                  borderColor: '#EF4444',
+                  borderWidth: 2,
+                  borderDash: [6, 6],
+                  pointRadius: 0,
+                  fill: false
+                }
+              ]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                x: {
+                  title: { display: true, text: 'Actual Billed Charges ($)' },
+                  min: 0,
+                  max: 65000,
+                  ticks: { callback: v => '$' + (v / 1000) + 'k' }
+                },
+                y: {
+                  title: { display: true, text: 'Model Predicted Charges ($)' },
+                  min: 0,
+                  max: 65000,
+                  ticks: { callback: v => '$' + (v / 1000) + 'k' }
+                }
+              }
+            }
+          });
+        }
+
+        // 5. Chart Residual Distribution Histogram
+        const ctxRes = document.getElementById('chartResidualDist');
+        if (ctxRes && residuals && residuals.bins && residuals.bins.length > 0) {
+          if (chartResidualDistInst) chartResidualDistInst.destroy();
+          chartResidualDistInst = new Chart(ctxRes, {
+            type: 'bar',
+            data: {
+              labels: residuals.bins,
+              datasets: [{
+                label: 'Residual Error Frequency',
+                data: residuals.counts,
+                backgroundColor: 'rgba(16, 185, 129, 0.75)',
+                borderColor: '#10B981',
+                borderWidth: 1,
+                borderRadius: 4
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: {
+                x: { title: { display: true, text: 'Residual Error Bins ($)' } },
+                y: { title: { display: true, text: 'Sample Count' }, beginAtZero: true }
+              }
+            }
+          });
+        }
+
+        // 6. Chart Global Feature Importance
+        const ctxFi = document.getElementById('chartAnalyticsFeatureImp');
+        if (ctxFi && Array.isArray(features) && features.length > 0) {
+          if (chartAnalyticsFeatureImpInst) chartAnalyticsFeatureImpInst.destroy();
+          chartAnalyticsFeatureImpInst = new Chart(ctxFi, {
+            type: 'bar',
+            data: {
+              labels: features.map(f => f.feature),
+              datasets: [{
+                label: 'Relative Actuarial Importance (%)',
+                data: features.map(f => f.percentage || ((f.importance / 12637) * 100).toFixed(1)),
+                backgroundColor: '#0077B6',
+                borderRadius: 4
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              indexAxis: 'y',
+              plugins: { legend: { display: false } },
+              scales: {
+                x: { title: { display: true, text: 'Relative Contribution (%)' }, max: 55 }
+              }
+            }
+          });
+        }
+
+      } catch (err) {
+        console.error("Analytics load error:", err);
+      }
+    }
+
+    // Helper for High-Res Figures Gallery
+    function showPlotFigure(figKey) {
+      const img = document.getElementById('activeGalleryImg');
+      const caption = document.getElementById('activeGalleryCaption');
+      if (!img || !caption) return;
+
+      const meta = {
+        'actual_vs_predicted': {
+          src: '/reports/figures/actual_vs_predicted.png',
+          caption: 'Actual vs. Predicted Medical Charges ($) demonstrating strong linear calibration along ideal 45° line.'
+        },
+        'residuals_distribution': {
+          src: '/reports/figures/residuals_distribution.png',
+          caption: 'Residual error distribution (Actual - Predicted) demonstrating zero-centered normality and bounded variance.'
+        },
+        'feature_importance': {
+          src: '/reports/figures/feature_importance.png',
+          caption: 'Champion model feature importance rankings showing obese_smoker interaction as the primary cost multiplier.'
+        },
+        'eda_correlation_heatmap': {
+          src: '/reports/figures/eda_correlation_heatmap.png',
+          caption: 'Full correlation heatmap across demographic variables, engineered interaction features, and medical charges.'
+        },
+        'eda_bmi_vs_charges_by_smoker': {
+          src: '/reports/figures/eda_bmi_vs_charges_by_smoker.png',
+          caption: 'Biometric BMI vs. Charges stratified by smoker status, demonstrating the exponential inflection threshold at BMI >= 30.'
+        },
+        'eda_age_vs_charges': {
+          src: '/reports/figures/eda_age_vs_charges.png',
+          caption: 'Chronological age trajectory vs. charges across insurance tiers showing steady baseline linear progression.'
+        }
+      };
+
+      if (meta[figKey]) {
+        img.src = meta[figKey].src;
+        caption.innerText = meta[figKey].caption;
+      }
+
+      // Update button styles
+      document.querySelectorAll('#plotGalleryButtons button').forEach(btn => {
+        btn.className = "plot-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 transition";
+      });
+      if (window.event && window.event.target) {
+        window.event.target.className = "plot-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-brand-600 text-white shadow-sm transition";
+      }
+    }
+
+    // ==========================================
+    // DASHBOARD CHARTS & KPIS
+    // ==========================================
+    async function loadDashboardData() {
+      try {
+        const res = await fetch(`${API_BASE}/analytics/dashboard`);
+        const data = await res.json();
+
+        if (document.getElementById('dashAvgCost')) {
+          document.getElementById('dashAvgCost').innerText = `$${Number(data.avg_predicted_cost || 13270.42).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        }
+        if (document.getElementById('dashMedianCost')) {
+          document.getElementById('dashMedianCost').innerText = `$${Number(data.median_cost || 9382.03).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        }
+        if (document.getElementById('dashHighRiskPct')) {
+          document.getElementById('dashHighRiskPct').innerText = `${data.high_risk_percentage || 21.8}%`;
+        }
+        if (document.getElementById('dashChampionR2')) {
+          document.getElementById('dashChampionR2').innerText = Number(data.active_model_r2 || 0.9024).toFixed(4);
+        }
+        if (document.getElementById('dashChampionName')) {
+          document.getElementById('dashChampionName').innerText = data.active_model_name || "Tuned Linear Regression";
+        }
+
+        // Chart Charges Dist
+        const ctxDist = document.getElementById('chartChargesDist');
+        if (ctxDist && data.cost_distribution) {
+          if (chartChargesDistInst) chartChargesDistInst.destroy();
+          chartChargesDistInst = new Chart(ctxDist, {
+            type: 'bar',
+            data: {
+              labels: Object.keys(data.cost_distribution),
+              datasets: [{
+                label: 'Applicant Frequency',
+                data: Object.values(data.cost_distribution),
+                backgroundColor: '#0077B6',
+                borderRadius: 6
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: {
+                y: { beginAtZero: true, title: { display: true, text: 'Sample Count' } },
+                x: { title: { display: true, text: 'Charge Range ($)' } }
+              }
+            }
+          });
+        }
+
+        // Chart Age Cohort
+        const ctxAge = document.getElementById('chartAgeCohort');
+        if (ctxAge && data.age_cohort_averages) {
+          if (chartAgeCohortInst) chartAgeCohortInst.destroy();
+          chartAgeCohortInst = new Chart(ctxAge, {
+            type: 'line',
+            data: {
+              labels: Object.keys(data.age_cohort_averages),
+              datasets: [{
+                label: 'Mean Charges ($)',
+                data: Object.values(data.age_cohort_averages),
+                borderColor: '#10B981',
+                backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                borderWidth: 2.5,
+                fill: true,
+                tension: 0.35,
+                pointRadius: 4,
+                pointBackgroundColor: '#10B981'
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: {
+                y: {
+                  ticks: {
+                    callback: (v) => '$' + (v / 1000) + 'k'
+                  },
+                  title: { display: true, text: 'Mean Charges ($)' }
+                }
+              }
+            }
+          });
+        }
+
+        // Load recent predictions into dashboard table
+        try {
+          const histRes = await fetch(`${API_BASE}/history?limit=5`);
+          const history = await histRes.json();
+          const dashHistTbody = document.getElementById('dashRecentTbody');
+          if (dashHistTbody && Array.isArray(history)) {
+            dashHistTbody.innerHTML = "";
+            if (history.length === 0) {
+              dashHistTbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">No predictions logged yet. Run a prediction to see records.</td></tr>`;
+            } else {
+              history.slice(0, 5).forEach(h => {
+                const tr = document.createElement('tr');
+                const isCrit = (h.risk_tier || '').includes("Critical") || (h.risk_tier || '').includes("High");
+                const badgeClass = isCrit ? "bg-rose-100 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400" : "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400";
+                tr.innerHTML = `
+                  <td class="p-3 font-mono text-slate-400">#${h.id}</td>
+                  <td class="p-3">Age ${h.age} • ${h.sex} • BMI ${h.bmi}</td>
+                  <td class="p-3 font-bold text-slate-900 dark:text-white">$${Number(h.predicted_charges).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                  <td class="p-3"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${badgeClass}">${h.risk_tier}</span></td>
+                  <td class="p-3 text-right">
+                    <a href="${API_BASE}/history/${h.id}/pdf" target="_blank" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-brand-600 dark:text-cyan-400 text-xs font-semibold hover:bg-slate-200 transition">PDF</a>
+                  </td>
+                `;
+                dashHistTbody.appendChild(tr);
+              });
+            }
+          }
+        } catch (e) {
+          console.warn("Recent history load note:", e);
+        }
+
+      } catch (err) {
+        console.error("Dashboard load error:", err);
+      }
+    }
+
+    // ==========================================
+    // RISK SENSITIVITY CHART
+    // ==========================================
+    async function loadRiskData() {
+      try {
+        const res = await fetch(`${API_BASE}/analytics/feature-importance`);
+        const features = await res.json();
+        const ctx = document.getElementById('chartRiskFeatureSens');
+        if (!ctx) return;
+        if (chartRiskFeatureSensInst) chartRiskFeatureSensInst.destroy();
+        chartRiskFeatureSensInst = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: features.map(f => f.feature),
+            datasets: [{
+              label: 'Relative Actuarial Importance',
+              data: features.map(f => f.importance),
+              backgroundColor: '#00B4D8',
+              borderRadius: 6
+            }]
+          },
+          options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y' }
+        });
+      } catch (err) {}
+    }
+
+    // ==========================================
+    // ADMIN, USERS & MONITORING
+    // ==========================================
+    async function loadAdminData() {
+      try {
+        const headers = {};
+        if (authToken) headers["Authorization"] = `Bearer ${authToken}`;
+        const [stats, logs] = await Promise.all([
+          fetch(`${API_BASE}/admin/system-stats`, { headers }).then(r => r.json()),
+          fetch(`${API_BASE}/admin/audit-logs?limit=25`, { headers }).then(r => r.json())
+        ]);
+
+        document.getElementById('adminUserCount').innerText = stats.total_registered_users;
+        document.getElementById('adminPredCount').innerText = stats.total_persisted_predictions;
+        document.getElementById('adminAuditCount').innerText = stats.total_audit_events;
+
+        const tbody = document.getElementById('auditLogsTbody');
+        tbody.innerHTML = "";
+        logs.forEach(l => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td class="p-3 font-mono text-slate-400">${new Date(l.timestamp).toLocaleString()}</td>
+            <td class="p-3 font-semibold text-brand-600">${l.action}</td>
+            <td class="p-3">${l.resource}</td>
+            <td class="p-3 text-slate-400">${l.ip_address || "127.0.0.1"}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error("Admin load error:", err);
+      }
+    }
+
+    async function loadAdminUsers() {
+      const tbody = document.getElementById('adminUsersTbody');
+      tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400">Loading user accounts...</td></tr>`;
+      try {
+        const headers = {};
+        if (authToken) headers["Authorization"] = `Bearer ${authToken}`;
+        const res = await fetch(`${API_BASE}/admin/users`, { headers });
+        const users = await res.json();
+        tbody.innerHTML = "";
+
+        users.forEach(u => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td class="p-3.5 font-mono text-slate-400">#${u.id}</td>
+            <td class="p-3.5 font-bold">${u.email}</td>
+            <td class="p-3.5">${u.full_name}</td>
+            <td class="p-3.5">
+              <select onchange="updateUserRole(${u.id}, this.value)" class="px-2 py-1 text-xs border rounded-lg dark:bg-slate-800 dark:border-slate-700">
+                <option value="user" ${u.role === 'user' ? 'selected' : ''}>User</option>
+                <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>Admin</option>
+                <option value="actuary" ${u.role === 'actuary' ? 'selected' : ''}>Actuary</option>
+                <option value="underwriter" ${u.role === 'underwriter' ? 'selected' : ''}>Underwriter</option>
+              </select>
+            </td>
+            <td class="p-3.5">
+              <span class="px-2 py-0.5 rounded text-[11px] font-bold ${u.is_active ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+                ${u.is_active ? 'Active' : 'Disabled'}
+              </span>
+            </td>
+            <td class="p-3.5 font-mono">${u.total_predictions}</td>
+            <td class="p-3.5 text-slate-400">${u.created_at}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-rose-500">Failed to load user accounts.</td></tr>`;
+      }
+    }
+
+    async function updateUserRole(userId, newRole) {
+      try {
+        const headers = { "Content-Type": "application/json" };
+        if (authToken) headers["Authorization"] = `Bearer ${authToken}`;
+        const res = await fetch(`${API_BASE}/admin/users/${userId}/role`, {
+          method: "PATCH",
+          headers,
+          body: JSON.stringify({ role: newRole })
+        });
+        const data = await res.json();
+        showToast(data.message || "User role updated!", "success");
+      } catch (err) {
+        showToast("Failed to update role.", "error");
+      }
+    }
+
+    async function loadMonitoringData() {
+      await loadAdminData();
+    }
+
+    // ==========================================
+    // INITIAL SYSTEM STARTUP
+    // ==========================================
+    restoreUserSession();
+    loadDashboardData();
+  </script>
+</body>
+</html>

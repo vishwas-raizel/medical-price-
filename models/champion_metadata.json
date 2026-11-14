@@ -1,0 +1,18 @@
+{
+    "champion_model": "Tuned Gradient Boosting",
+    "test_r2": 0.8612,
+    "test_rmse": 4601.15,
+    "test_mae": 2971.74,
+    "features": [
+        "age",
+        "bmi",
+        "children",
+        "is_obese",
+        "obese_smoker",
+        "sex_male",
+        "smoker_yes",
+        "region_northwest",
+        "region_southeast",
+        "region_southwest"
+    ]
+}

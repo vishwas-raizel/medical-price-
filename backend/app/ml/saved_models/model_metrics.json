@@ -1,0 +1,91 @@
+{
+    "Linear Regression": {
+        "mae": 2368.76,
+        "mse": 17158705.1,
+        "rmse": 4142.31,
+        "r2": 0.9066,
+        "adjusted_r2": 0.903,
+        "residual_mean": -17.82,
+        "residual_std": 4142.27,
+        "residual_skew": 3.013,
+        "cv_r2_mean": 0.8471
+    },
+    "Ridge Regression": {
+        "mae": 2377.62,
+        "mse": 17193024.49,
+        "rmse": 4146.45,
+        "r2": 0.9064,
+        "adjusted_r2": 0.9028,
+        "residual_mean": -17.64,
+        "residual_std": 4146.41,
+        "residual_skew": 3.009,
+        "cv_r2_mean": 0.8471
+    },
+    "Lasso Regression": {
+        "mae": 2368.82,
+        "mse": 17159850.03,
+        "rmse": 4142.44,
+        "r2": 0.9066,
+        "adjusted_r2": 0.903,
+        "residual_mean": -17.73,
+        "residual_std": 4142.41,
+        "residual_skew": 3.013,
+        "cv_r2_mean": 0.8471
+    },
+    "Random Forest": {
+        "mae": 2650.36,
+        "mse": 22277122.01,
+        "rmse": 4719.86,
+        "r2": 0.8788,
+        "adjusted_r2": 0.8741,
+        "residual_mean": -340.47,
+        "residual_std": 4707.57,
+        "residual_skew": 2.109,
+        "cv_r2_mean": 0.8205
+    },
+    "Gradient Boosting": {
+        "mae": 2439.99,
+        "mse": 17663958.12,
+        "rmse": 4202.85,
+        "r2": 0.9039,
+        "adjusted_r2": 0.9001,
+        "residual_mean": -161.93,
+        "residual_std": 4199.73,
+        "residual_skew": 2.843,
+        "cv_r2_mean": 0.8356
+    },
+    "XGBoost": {
+        "mae": 2425.63,
+        "mse": 17470347.41,
+        "rmse": 4179.75,
+        "r2": 0.9049,
+        "adjusted_r2": 0.9012,
+        "residual_mean": -154.86,
+        "residual_std": 4176.88,
+        "residual_skew": 3.002,
+        "cv_r2_mean": 0.8424
+    },
+    "LightGBM": {
+        "mae": 2429.64,
+        "mse": 17594765.69,
+        "rmse": 4194.61,
+        "r2": 0.9042,
+        "adjusted_r2": 0.9005,
+        "residual_mean": -85.97,
+        "residual_std": 4193.73,
+        "residual_skew": 3.004,
+        "cv_r2_mean": 0.8477
+    },
+    "Tuned Linear Regression": {
+        "mae": 2414.12,
+        "mse": 17931661.2,
+        "rmse": 4234.58,
+        "r2": 0.9024,
+        "adjusted_r2": 0.8986,
+        "residual_mean": -71.68,
+        "residual_std": 4233.97,
+        "residual_skew": 3.0,
+        "cv_r2_mean": 0.8436,
+        "is_champion": true
+    }
+}

@@ -1,0 +1,32 @@
+# Binaries & Large Executables
+bun.exe
+*.exe
+
+# Dependencies
+node_modules/
+frontend/node_modules/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+*.pyo
+
+# Environments & Local Configs
+.env
+.venv/
+env/
+venv/
+ENV/
+
+# Backups
+*.bak
+*.tmp
+.DS_Store
+Thumbs.db
+
+git.bat
+bun.bat

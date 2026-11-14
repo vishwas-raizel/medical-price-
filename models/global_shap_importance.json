@@ -1,0 +1,52 @@
+[
+  {
+    "feature": "obese_smoker",
+    "importance": 0.384,
+    "description": "Multiplicative interaction of BMI >= 30 and regular smoking"
+  },
+  {
+    "feature": "smoker_yes",
+    "importance": 0.282,
+    "description": "Tobacco smoking status (single highest healthcare claim multiplier)"
+  },
+  {
+    "feature": "bmi",
+    "importance": 0.165,
+    "description": "Body Mass Index measuring cardiovascular and metabolic risk"
+  },
+  {
+    "feature": "age",
+    "importance": 0.118,
+    "description": "Beneficiary chronological age reflecting baseline actuarial mortality"
+  },
+  {
+    "feature": "children",
+    "importance": 0.027,
+    "description": "Number of dependent beneficiaries covered under the plan"
+  },
+  {
+    "feature": "is_obese",
+    "importance": 0.012,
+    "description": "Clinical threshold indicator for obesity (BMI >= 30.0)"
+  },
+  {
+    "feature": "region_southeast",
+    "importance": 0.006,
+    "description": "Regional geographic claim variance (Southeast US)"
+  },
+  {
+    "feature": "region_northwest",
+    "importance": 0.003,
+    "description": "Regional geographic claim variance (Northwest US)"
+  },
+  {
+    "feature": "region_southwest",
+    "importance": 0.002,
+    "description": "Regional geographic claim variance (Southwest US)"
+  },
+  {
+    "feature": "sex_male",
+    "importance": 0.001,
+    "description": "Biological gender actuarial baseline"
+  }
+]

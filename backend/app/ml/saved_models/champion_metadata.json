@@ -1,0 +1,38 @@
+{
+    "champion_name": "Tuned Linear Regression",
+    "algorithm": "Linear Regression",
+    "parameters": {
+        "max_depth": 5,
+        "min_samples_split": 5,
+        "n_estimators": 150
+    },
+    "test_r2": 0.9024,
+    "test_rmse": 4234.58,
+    "test_mae": 2414.12,
+    "cv_r2": 0.8436,
+    "train_samples": 1069,
+    "test_samples": 268,
+    "features": [
+        "age",
+        "bmi",
+        "children",
+        "is_obese",
+        "obese_smoker",
+        "sex_male",
+        "smoker_yes",
+        "region_northwest",
+        "region_southeast",
+        "region_southwest"
+    ],
+    "conformal_quantile_90": 3347.920867760797,
+    "dataset_metadata": {
+        "name": "Medical Cost Personal Dataset (Kaggle Benchmark)",
+        "source": "US Census Bureau & National Center for Health Statistics via Kaggle/UCI",
+        "sha256_hash": "505c1cbc2e63d0363bac59501563df2530aadf4cdb9cfee226f4ef32f5468281",
+        "total_records": 1338,
+        "total_features": 6,
+        "missing_values_count": 0,
+        "duplicates_count": 1,
+        "limitations": "Dataset captures historical billed insurance charges rather than forward-looking commercial premiums. Predictive values should be interpreted as expected annual healthcare utilization costs."
+    }
+}

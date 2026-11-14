@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  healthrisk-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: healthrisk_ai_app
+    ports:
+      - "8000:8000"
+    environment:
+      - SECRET_KEY=prod-super-secret-key-medical-ai-2026-auth-jwt-token
+      - DATABASE_URL=sqlite:////app/backend/insurance_platform.db
+      - ACCESS_TOKEN_EXPIRE_MINUTES=1440
+    volumes:
+      - ./backend/insurance_platform.db:/app/backend/insurance_platform.db
+      - ./reports:/app/reports
+    restart: unless-stopped

@@ -1,0 +1,82 @@
+{
+    "Linear Regression": {
+        "CV_R2_Mean": 0.8417,
+        "Test_MAE": 2793.5,
+        "Test_MSE": 20002619.01,
+        "Test_RMSE": 4472.43,
+        "Test_R2": 0.8689,
+        "Adjusted_R2": 0.864
+    },
+    "Ridge Regression": {
+        "CV_R2_Mean": 0.8417,
+        "Test_MAE": 2798.12,
+        "Test_MSE": 20005913.36,
+        "Test_RMSE": 4472.8,
+        "Test_R2": 0.8689,
+        "Adjusted_R2": 0.8639
+    },
+    "Lasso Regression": {
+        "CV_R2_Mean": 0.8417,
+        "Test_MAE": 2793.54,
+        "Test_MSE": 20001771.29,
+        "Test_RMSE": 4472.33,
+        "Test_R2": 0.8689,
+        "Adjusted_R2": 0.864
+    },
+    "Decision Tree": {
+        "CV_R2_Mean": 0.6663,
+        "Test_MAE": 3494.4,
+        "Test_MSE": 45571975.8,
+        "Test_RMSE": 6750.7,
+        "Test_R2": 0.7013,
+        "Adjusted_R2": 0.6901
+    },
+    "Random Forest": {
+        "CV_R2_Mean": 0.8118,
+        "Test_MAE": 3239.06,
+        "Test_MSE": 26461927.12,
+        "Test_RMSE": 5144.12,
+        "Test_R2": 0.8265,
+        "Adjusted_R2": 0.82
+    },
+    "Gradient Boosting": {
+        "CV_R2_Mean": 0.8303,
+        "Test_MAE": 2977.75,
+        "Test_MSE": 22404448.51,
+        "Test_RMSE": 4733.33,
+        "Test_R2": 0.8531,
+        "Adjusted_R2": 0.8476
+    },
+    "AdaBoost": {
+        "CV_R2_Mean": 0.7632,
+        "Test_MAE": 4957.06,
+        "Test_MSE": 31183997.52,
+        "Test_RMSE": 5584.26,
+        "Test_R2": 0.7956,
+        "Adjusted_R2": 0.7879
+    },
+    "Support Vector Regressor (SVR)": {
+        "CV_R2_Mean": 0.7879,
+        "Test_MAE": 2369.43,
+        "Test_MSE": 26676849.93,
+        "Test_RMSE": 5164.96,
+        "Test_R2": 0.8251,
+        "Adjusted_R2": 0.8186
+    },
+    "Tuned Gradient Boosting": {
+        "CV_R2_Mean": 0.8374,
+        "Test_MAE": 2971.74,
+        "Test_MSE": 21170548.17,
+        "Test_RMSE": 4601.15,
+        "Test_R2": 0.8612,
+        "Adjusted_R2": 0.856
+    },
+    "Tuned Random Forest": {
+        "CV_R2_Mean": 0.835,
+        "Test_MAE": 2864.52,
+        "Test_MSE": 20920313.21,
+        "Test_RMSE": 4573.87,
+        "Test_R2": 0.8629,
+        "Adjusted_R2": 0.8577
+    }
+}
